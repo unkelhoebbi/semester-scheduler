@@ -2,7 +2,11 @@
   <h1>Plan your semester schedule</h1>
   <div class="columns">
     <div class="column semester" v-for="semester in semesters" :key="semester.name">
-      <Semester :name="semester.name" :modules="semester.modules"></Semester>
+      <Semester
+        :name="semester.name"
+        v-model:modules="semester.modules"
+        :all-modules="allModules"
+      ></Semester>
     </div>
   </div>
 </template>
@@ -384,6 +388,20 @@ export default {
                 'Software Engineering STD_21 (Profil)',
               ],
             },
+          ],
+        },
+      ],
+      allModules: [
+        {
+          name: 'Algorithmen und Datenstrukturen 2',
+          url: 'https://studien.rj.ost.ch/allModules/37247_M_MsTe.html',
+          categories: [
+            'Aufbau (I_Auf)',
+            'Informatik (I_Inf)',
+          ],
+          ects: 4,
+          focuses: [
+            'Software Engineering STD_21 (Profil)',
           ],
         },
       ],
