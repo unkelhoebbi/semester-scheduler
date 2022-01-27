@@ -1,6 +1,6 @@
 <template>
   <Navigation></Navigation>
-  <div class="container p-2 mt-6">
+  <div class="p-5 mt-6">
     <router-view/>
   </div>
   <Footer></Footer>

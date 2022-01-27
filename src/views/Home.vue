@@ -3,7 +3,7 @@
   <div class="columns">
     <div class="column semester" v-for="semester in semesters" :key="semester.name">
       <Semester
-        :name="semester.name"
+        :number="semester.number"
         v-model:modules="semester.modules"
         :all-modules="allModules"
       ></Semester>
@@ -14,13 +14,14 @@
 <script>
 import Semester from '../components/Semester.vue';
 
+const URL = 'https://jeremystucki.github.io/ost-planer/data/modules.json';
 export default {
   name: 'Home',
   data() {
     return {
       semesters: [
         {
-          name: 'Semester 1',
+          number: 1,
           modules: [
             {
               name: '.Net Technologien (M_MsTe / I)',
@@ -85,7 +86,7 @@ export default {
           ],
         },
         {
-          name: 'Semester 2',
+          number: 2,
           modules: [
             {
               name: '.Net Technologien (M_MsTe / I)',
@@ -126,7 +127,7 @@ export default {
           ],
         },
         {
-          name: 'Semester 3',
+          number: 3,
           modules: [
             {
               name: '.Net Technologien (M_MsTe / I)',
@@ -190,7 +191,7 @@ export default {
             },
           ],
         }, {
-          name: 'Semester 4',
+          number: 4,
           modules: [
             {
               name: '.Net Technologien (M_MsTe / I)',
@@ -230,7 +231,7 @@ export default {
             },
           ],
         }, {
-          name: 'Semester 5',
+          number: 5,
           modules: [
             {
               name: '.Net Technologien (M_MsTe / I)',
@@ -270,7 +271,7 @@ export default {
             },
           ],
         }, {
-          name: 'Semester 6',
+          number: 6,
           modules: [
             {
               name: '.Net Technologien (M_MsTe / I)',
@@ -310,7 +311,7 @@ export default {
             },
           ],
         }, {
-          name: 'Semester 7',
+          number: 7,
           modules: [
             {
               name: '.Net Technologien (M_MsTe / I)',
@@ -350,7 +351,7 @@ export default {
             },
           ],
         }, {
-          name: 'Semester 8',
+          number: 8,
           modules: [
             {
               name: '.Net Technologien (M_MsTe / I)',
@@ -391,23 +392,24 @@ export default {
           ],
         },
       ],
-      allModules: [
-        {
-          name: 'Algorithmen und Datenstrukturen 2',
-          url: 'https://studien.rj.ost.ch/allModules/37247_M_MsTe.html',
-          categories: [
-            'Aufbau (I_Auf)',
-            'Informatik (I_Inf)',
-          ],
-          ects: 4,
-          focuses: [
-            'Software Engineering STD_21 (Profil)',
-          ],
-        },
-      ],
+      allModules: null,
     };
   },
   components: { Semester },
+  methods: {
+    getAllModules() {
+      fetch(URL).then((response) => {
+        if (response.ok) {
+          response.json().then((modules) => {
+            this.allModules = modules;
+          });
+        }
+      });
+    },
+  },
+  mounted() {
+    this.getAllModules();
+  },
 };
 </script>
 <style scoped>

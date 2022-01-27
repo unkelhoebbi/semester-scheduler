@@ -1,6 +1,6 @@
 <template>
 <div class="columns is-flex is-flex-direction-column has-text-centered">
-  <h2>{{ name }}</h2>
+  <h2>Semester {{ number }}</h2>
   <div class="column module mt-1" v-for="module in modules" :key="module.name">
     <button class="is-pulled-right" v-on:click="removeModule(module.name)">
       <i class="remove-module fab fa fa-times"></i>
@@ -36,8 +36,8 @@
 export default {
   name: 'Semester',
   props: {
-    name: {
-      type: String,
+    number: {
+      type: Number,
     },
     modules: {
       type: Array,
