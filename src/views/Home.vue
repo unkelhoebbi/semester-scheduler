@@ -14,7 +14,7 @@
 <script>
 import Semester from '../components/Semester.vue';
 
-const URL = 'https://jeremystucki.github.io/ost-planer/data/modules.json';
+const URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/main/data/modules.json';
 export default {
   name: 'Home',
   data() {
