@@ -13,26 +13,9 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
-      - name: Archive Output
-        run: tar -cvf artifact.tar dist
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
-          name: github-pages
-          path: artifact.tar
-
-  deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      pages: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to Pages
-        id: deployment
-        uses: actions/deploy-pages@v1-beta
+          branch: gh-pages
+          folder: dist 
 
