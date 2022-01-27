@@ -6,7 +6,7 @@
         <p>© 2022 Jeremy Stucki, Gregor Stuber</p>
         <div class="py-2 is-hidden-tablet"></div>
         <div class="ml-auto">
-          <a class="mr-4 is-inline-block" href="https://github.com/unkelhoebbi">
+          <a class="mr-4 is-inline-block" href="https://github.com/unkelhoebbi/semester-scheduler">
             <i class="fab fa-github fa-2x social"></i>
           </a>
         </div>
