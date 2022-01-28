@@ -59,17 +59,15 @@ export default {
     },
     addModule() {
       const module = this.allModules.find((item) => item.name === this.additionalModule);
-      // eslint-disable-next-line vue/no-mutating-props
-      this.modules.push(module);
+      this.$parent.addModuleToSemester(this.number - 1, module);
       this.additionalModule = null;
       this.isAddingNewModule = false;
       this.updateEctsTotal();
     },
     removeModule(moduleName) {
       const moduleToDelete = this.modules.filter((item) => item.name === moduleName);
-      const index = this.modules.indexOf(moduleToDelete[0]);
-      // eslint-disable-next-line vue/no-mutating-props
-      this.modules.splice(index, 1);
+      const offset = this.modules.indexOf(moduleToDelete[0]);
+      this.$parent.removeModuleFromSemester(this.number - 1, offset);
       this.updateEctsTotal();
     },
   },

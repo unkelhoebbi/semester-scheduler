@@ -13,25 +13,31 @@
     <H2>Übersicht Kategorien/Credits</h2>
     <table>
       <thead>
-        <tr>
-          <th class="p-2">Name</th>
-          <th class="p-2">Mögliche Credits</th>
-          <th class="p-2">Geplante Credits</th>
-        </tr>
+      <tr>
+        <th class="p-2">Name</th>
+        <th class="p-2">Mögliche</th>
+        <th class="p-2">Required</th>
+        <th class="p-2">Geplante</th>
+        <th class="p-2">Erreichte</th>
+        <th class="p-2">Spatzig</th>
+      </tr>
       </thead>
       <tbody>
-        <tr v-for="category in allCategories" :key="category.name">
-          <td class="p-2">
-            {{ category.name }}
-          </td>
-          <td class="p-2">{{ category.possibleCredits }}</td>
-          <td class="p-2">{{ category.earnedCredits }}</td>
-        </tr>
-        <tr>
-          <td class="p-2">Total geplante</td>
-          <td></td>
-          <td class="p-2">{{ totalPlanned }}</td>
-        </tr>
+      <tr v-for="category in allCategories" :key="category.name">
+        <td class="p-2">
+          {{ category.name }}
+        </td>
+        <td class="p-2">{{ category.total_ects }}</td>
+        <td class="p-2">{{ category.required_ects }}</td>
+        <td class="p-2">{{ category.plannedCredits }}</td>
+        <td class="p-2">{{ category.earnedCredits }}</td>
+        <td class="p-2">{{ category.plannedCredits - category.required_ects }}</td>
+      </tr>
+      <tr>
+        <td class="p-2">Total geplante</td>
+        <td></td>
+        <td class="p-2">{{ totalPlanned }}</td>
+      </tr>
       </tbody>
     </table>
   </article>
@@ -524,63 +530,76 @@ export default {
           ],
         },
       ],
-      allModules: null,
-      allCategories: null,
+      allModules: [],
+      allCategories: [],
       totalPlanned: 0,
+      totalEarned: 0,
+      lastSemester: 2,
     };
   },
   components: { Semester },
   methods: {
     getAllModules() {
-      fetch(`${BASE_URL}${ROUTE_MODULES}`).then((response) => {
-        if (response.ok) {
-          response.json().then((modules) => {
-            this.allModules = modules;
-          });
-        }
-      });
+      fetch(`${BASE_URL}${ROUTE_MODULES}`)
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((modules) => {
+                this.allModules = modules;
+              });
+          }
+        });
     },
     getCategories() {
-      fetch(`${BASE_URL}${ROUTE_CATEGORIES}`).then((response) => {
-        if (response.ok) {
-          response.json().then((categories) => {
-            categories.forEach((category) => {
-              // eslint-disable-next-line no-param-reassign
-              category.possibleCredits = 0;
-              // eslint-disable-next-line no-param-reassign
-              category.earnedCredits = 0;
-              this.allModules.forEach((module) => {
-                if (module.categories.includes(category.name)) {
+      fetch(`${BASE_URL}${ROUTE_CATEGORIES}`)
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((categories) => {
+                categories.forEach((category) => {
                   // eslint-disable-next-line no-param-reassign
-                  category.possibleCredits += module.ects;
-                }
-              });
-              this.semesters.forEach((semester) => {
-                semester.modules.forEach((module) => {
-                  if (module.categories.includes(category.name)) {
-                    // eslint-disable-next-line no-param-reassign
-                    category.earnedCredits += module.ects;
-                  }
+                  category.earnedCredits = 0;
+                  // eslint-disable-next-line no-param-reassign
+                  category.plannedCredits = 0;
+                  this.semesters.forEach((semester) => {
+                    semester.modules.forEach((module) => {
+                      if (module.categories.includes(category.name)) {
+                        if (semester.number < this.lastSemester) {
+                          // eslint-disable-next-line no-param-reassign
+                          category.earnedCredits += module.ects;
+                        }
+                        // eslint-disable-next-line no-param-reassign
+                        category.plannedCredits += module.ects;
+                      }
+                    });
+                  });
                 });
+                this.allCategories = categories;
               });
-            });
-            this.allCategories = categories;
-          });
-        }
-      });
-    },
-    updateTotalPlanned() {
-      this.semesters.forEach((semester) => {
-        semester.modules.forEach((module) => {
-          this.totalPlanned += module.ects;
+          }
         });
+    },
+    addModuleToSemester(offset, module) {
+      this.semesters[offset].modules.push(module);
+      this.updateStatistics();
+    },
+    removeModuleFromSemester(offsetSemesters, offsetModules) {
+      this.semesters[offsetSemesters].modules.splice(offsetModules, 1);
+      this.updateStatistics();
+    },
+    updateStatistics() {
+      this.totalPlanned = 0;
+      this.totalEarned = 0;
+      this.allCategories.forEach((category) => {
+        this.totalPlanned += category.totalPlanned;
+        this.totalEarned += category.totalEarned;
       });
     },
   },
   mounted() {
     this.getAllModules();
     this.getCategories();
-    this.updateTotalPlanned();
+    setTimeout(this.updateStatistics, 500);
   },
 };
 </script>
