@@ -72,6 +72,10 @@ export default {
       this.ectsTotal = this.modules.reduce((a, b) => a + (b.ects || 0), 0);
     },
     addModule() {
+      if (this.modules.some(s => s.name === this.additionalModule) {
+        // should we display an error message?
+        return;
+      }
       const module = this.allModules.find((item) => item.name === this.additionalModule);
       // eslint-disable-next-line vue/no-mutating-props
       this.modules.push(module);
