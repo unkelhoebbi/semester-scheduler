@@ -72,8 +72,10 @@ export default {
       this.ectsTotal = this.modules.reduce((a, b) => a + (b.ects || 0), 0);
     },
     addModule() {
-      if (this.modules.some(s => s.name === this.additionalModule) {
-        // should we display an error message?
+      const blockingSemesterNumber = this.$parent.isModuleAlreadyInASemester(this.additionalModule);
+      if (blockingSemesterNumber) {
+        // TODO: display error message
+        console.warn(`Module ${this.additionalModule} is already in semester ${blockingSemesterNumber}`);
         return;
       }
       const module = this.allModules.find((item) => item.name === this.additionalModule);
