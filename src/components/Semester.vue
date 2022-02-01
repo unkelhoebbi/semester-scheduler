@@ -64,6 +64,7 @@ export default {
       this.additionalModule = null;
       this.isAddingNewModule = false;
       this.updateEctsTotal();
+      this.$parent.updateUrlFragment();
     },
     removeModule(moduleName) {
       const moduleToDelete = this.modules.filter((item) => item.name === moduleName);
@@ -71,6 +72,7 @@ export default {
       // eslint-disable-next-line vue/no-mutating-props
       this.modules.splice(index, 1);
       this.updateEctsTotal();
+      this.$parent.updateUrlFragment();
     },
   },
   mounted() {
