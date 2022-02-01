@@ -9,35 +9,44 @@
       ></Semester>
     </div>
   </div>
-  <article>
-    <H2 class="subtitle">Übersicht Kategorien/Credits</h2>
-    <table>
-      <thead>
-        <tr>
-          <th class="p-2">Name</th>
-          <th class="p-2">Mögliche Credits</th>
-          <th class="p-2">Geplante Credits</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="category in allCategories"
-          :key="category.name"
-          v-bind:class="category.categoryClass">
-          <td class="p-2">
-            {{ category.name }}
-          </td>
-          <td class="p-2">{{ category.possibleCredits }}</td>
-          <td class="p-2">{{ category.earnedCredits }}</td>
-        </tr>
-        <tr>
-          <td class="p-2">Total geplante</td>
-          <td></td>
-          <td class="p-2">{{ totalPlanned }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </article>
+  <div class="columns">
+    <div class="column">
+      <article>
+        <H2 class="subtitle">Übersicht Kategorien/Credits</h2>
+        <table>
+          <thead>
+          <tr>
+            <th class="p-2">Name</th>
+            <th class="p-2">Mögliche Credits</th>
+            <th class="p-2">Geplante Credits</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr
+            v-for="category in allCategories"
+            :key="category.name"
+            v-bind:class="category.categoryClass">
+            <td class="p-2">
+              {{ category.name }}
+            </td>
+            <td class="p-2">{{ category.possibleCredits }}</td>
+            <td class="p-2">{{ category.earnedCredits }}</td>
+          </tr>
+          <tr>
+            <td class="p-2">Total geplante</td>
+            <td></td>
+            <td class="p-2">{{ totalPlanned }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </article>
+    </div>
+    <div class="column">
+      <section>
+        <img src="../assets/this_is_fine.jpg">
+      </section>
+    </div>
+  </div>
 </template>
 
 <script>
