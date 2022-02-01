@@ -1,5 +1,5 @@
 <template>
-  <h1>Plan your semester schedule</h1>
+  <h1 class="title">Plane dein Semester</h1>
   <div class="columns">
     <div class="column semester" v-for="semester in semesters" :key="semester.name">
       <Semester
@@ -10,7 +10,7 @@
     </div>
   </div>
   <article>
-    <H2>Übersicht Kategorien/Credits</h2>
+    <H2 class="subtitle">Übersicht Kategorien/Credits</h2>
     <table>
       <thead>
         <tr>
@@ -20,7 +20,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="category in allCategories" :key="category.name">
+        <tr
+          v-for="category in allCategories"
+          :key="category.name"
+          v-bind:class="category.categoryClass">
           <td class="p-2">
             {{ category.name }}
           </td>
@@ -43,6 +46,16 @@ import Semester from '../components/Semester.vue';
 const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/main/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
+const CATEGORY_CLASS_MAP = {
+  'Aufbau (I_Auf)': 'category-1',
+  'Engineering Practice (I_EP)': 'category-2',
+  'Gesellschaft, Wirtschaft und Recht (I-gwr)': 'category-3',
+  'Informatik (I_Inf)': 'category-4',
+  'Kommunikation und Englisch (I_KomEng)': 'category-5',
+  'Mathematik und Physik (Kat_MaPh)': 'category-6',
+  'Rahmenausbildung (Kat_RA)': 'category-7',
+  'Studien- Bachelorarbeit (I_SaBa)': 'category-8',
+};
 export default {
   name: 'Home',
   data() {
@@ -84,6 +97,8 @@ export default {
         if (response.ok) {
           response.json().then((categories) => {
             categories.forEach((category) => {
+              // eslint-disable-next-line no-param-reassign
+              category.categoryClass = CATEGORY_CLASS_MAP[category.name];
               // eslint-disable-next-line no-param-reassign
               category.possibleCredits = 0;
               // eslint-disable-next-line no-param-reassign
@@ -134,5 +149,37 @@ export default {
 <style scoped>
 .semester {
   margin: 1.5rem 0.5rem 0 0.5rem;
+}
+.category-1 {
+  border-bottom: 2px solid #e17055;
+  border-left: 2px solid #e17055;
+}
+.category-2 {
+  border-bottom: 2px solid #e84393;
+  border-left: 2px solid #e84393;
+}
+.category-3 {
+  border-bottom: 2px solid #ff7675;
+  border-left: 2px solid #ff7675;
+}
+.category-4 {
+  border-bottom: 2px solid #00cec9;
+  border-left: 2px solid #00cec9;
+}
+.category-5 {
+  border-bottom: 2px solid #00b894;
+  border-left: 2px solid #00b894;
+}
+.category-6 {
+  border-bottom: 2px solid #a29bfe;
+  border-left: 2px solid #a29bfe;
+}
+.category-7 {
+  border-bottom: 2px solid #55efc4;
+  border-left: 2px solid #55efc4;
+}
+.category-8 {
+  border-bottom: 2px solid #fdcb6e;
+  border-left: 2px solid #fdcb6e;
 }
 </style>
