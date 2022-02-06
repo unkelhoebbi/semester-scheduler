@@ -72,6 +72,12 @@ export default {
       this.ectsTotal = this.modules.reduce((a, b) => a + (b.ects || 0), 0);
     },
     addModule() {
+      const blockingSemesterNumber = this.$parent.getPlannedSemesterForModule(this.additionalModule);
+      if (blockingSemesterNumber) {
+        // TODO: display error message
+        console.warn(`Module ${this.additionalModule} is already in semester ${blockingSemesterNumber}`);
+        return;
+      }
       const module = this.allModules.find((item) => item.name === this.additionalModule);
       // eslint-disable-next-line vue/no-mutating-props
       this.modules.push(module);
