@@ -150,7 +150,6 @@ export default {
       this.restorePlanFromUrl();
       this.getCategories();
       this.updateTotalPlanned();
-      this.updateUrlFragment();
     });
   },
 };
