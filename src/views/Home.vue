@@ -152,6 +152,8 @@ export default {
       this.updateTotalPlanned();
       this.updateUrlFragment();
     });
+
+    window.addEventListener('hashchange', this.restorePlanFromUrl);
   },
 };
 </script>
