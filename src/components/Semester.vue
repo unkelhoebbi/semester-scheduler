@@ -76,8 +76,11 @@ export default {
         this.additionalModule,
       );
       if (blockingSemesterNumber) {
-        // TODO: display error message
-        console.warn(`Module ${this.additionalModule} is already in semester ${blockingSemesterNumber}`);
+        const text = `Module ${this.additionalModule} is already in semester ${blockingSemesterNumber}`;
+        console.warn(text);
+        this.$parent.showErrorMsg(text);
+        this.additionalModule = null;
+        this.isAddingNewModule = false;
         return;
       }
       const module = this.allModules.find((item) => item.name === this.additionalModule);
