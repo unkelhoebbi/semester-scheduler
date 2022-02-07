@@ -1,5 +1,16 @@
 <template>
-  <h1 class="title">Plane dein Semester</h1>
+  <div class="columns">
+    <div class="column">
+      <h1 class="title">Plane dein Semester</h1>
+    </div>
+    <div class="column is-narrow">
+      <Transition>
+        <div v-if="errorMsg" class="notification is-danger">
+          <span>{{ errorMsg }}</span>
+        </div>
+      </Transition>
+    </div>
+  </div>
   <div class="columns">
     <div class="column semester" v-for="semester in semesters" :key="semester.name">
       <Semester
@@ -12,7 +23,7 @@
   <div class="columns">
     <div class="column">
       <article>
-        <H2 class="subtitle">Übersicht Kategorien/Credits</h2>
+        <h2 class="subtitle">Übersicht Kategorien/Credits</h2>
         <table>
           <thead>
           <tr>
@@ -73,6 +84,7 @@ export default {
       allModules: null,
       allCategories: null,
       totalPlanned: 0,
+      errorMsg: null,
     };
   },
   components: { Semester },
@@ -149,6 +161,12 @@ export default {
         (semester) => semester.modules.some(module => module.name === moduleName),
       )?.number;
     },
+    showErrorMsg(text) {
+      this.errorMsg = text;
+      setTimeout(() => {
+        this.errorMsg = null;
+      }, 3000);
+    },
   },
   mounted() {
     this.getAllModules(() => {
@@ -196,5 +214,20 @@ export default {
 .category-8 {
   border-bottom: 2px solid #fdcb6e;
   border-left: 2px solid #fdcb6e;
+}
+.notification {
+  z-index: 999;
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+}
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
