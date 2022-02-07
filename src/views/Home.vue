@@ -85,6 +85,7 @@ export default {
       allCategories: null,
       totalPlanned: 0,
       errorMsg: null,
+      errorTimer: null,
     };
   },
   components: { Semester },
@@ -162,8 +163,11 @@ export default {
       )?.number;
     },
     showErrorMsg(text) {
+      if (this.errorTimer !== null) {
+        clearTimeout(this.errorTimer);
+      }
       this.errorMsg = text;
-      setTimeout(() => {
+      this.errorTimer = setTimeout(() => {
         this.errorMsg = null;
       }, 3000);
     },
