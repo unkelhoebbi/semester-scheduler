@@ -144,9 +144,11 @@ export default {
         .map((semester) => semester.modules.map((module) => module.id).join('_'))
         .join('-')}`;
     },
-    getPlannedSemesterForModule(moduleName: string): number {
-      return this.semesters.find(semester => semester.modules.some(module => module.name === moduleName))?.number;
-    }
+    getPlannedSemesterForModule(moduleName) {
+      return this.semesters.find(
+        (semester) => semester.modules.some(module => module.name === moduleName),
+      )?.number;
+    },
   },
   mounted() {
     this.getAllModules(() => {
