@@ -10,7 +10,7 @@
     </div>
   </div>
   <article>
-    <H2>Übersicht Kategorien/Credits</h2>
+    <h2>Übersicht Kategorien/Credits</h2>
     <table>
       <thead>
       <tr>
@@ -23,7 +23,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="category in allCategories" :key="category.name">
+      <tr v-for="category in mappedCategories" :key="category.name">
         <td class="p-2">
           {{ category.name }}
         </td>
@@ -49,507 +49,30 @@ import Semester from '../components/Semester.vue';
 const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/main/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
-const CATEGORY_CLASS_MAP = {
-  'Aufbau (I_Auf)': 'category-1',
-  'Engineering Practice (I_EP)': 'category-2',
-  'Gesellschaft, Wirtschaft und Recht (I-gwr)': 'category-3',
-  'Informatik (I_Inf)': 'category-4',
-  'Kommunikation und Englisch (I_KomEng)': 'category-5',
-  'Mathematik und Physik (Kat_MaPh)': 'category-6',
-  'Rahmenausbildung (Kat_RA)': 'category-7',
-  'Studien- Bachelorarbeit (I_SaBa)': 'category-8',
-};
 export default {
   name: 'Home',
   data() {
     return {
-      semesters: [
-        {
-          number: 1,
-          modules: [
-            {
-              name: 'Analysis 1 f\u00fcr Informatiker (M_An1I / MN)',
-              url: 'https://studien.rj.ost.ch/allModules/28151_M_An1I.html',
-              categories: [
-                'Mathematik und Physik (Kat_MaPh)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Diskrete Mathematik f\u00fcr Informatik  (M_DMI / MN)',
-              url: 'https://studien.rj.ost.ch/allModules/24442_M_DMI.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Objektorientierte Programmierung 1 (M_OOP1 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/38872_M_OOP1.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Automatisierung mit Python (M_AutPy / I)',
-              url: 'https://studien.rj.ost.ch/allModules/38879_M_AutPy.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 2,
-              focuses: [],
-            },
-            {
-              name: 'Datenbanksysteme 1 (M_Dbs1 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/39093_M_Dbs1.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Betriebssysteme 1 (M_Bsys1 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/39080_M_Bsys1.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-          ],
-        },
-        {
-          number: 2,
-          modules: [
-            {
-              name: 'Analysis 2 f\u00fcr Informatik (M_An2I / MN)',
-              url: 'https://studien.rj.ost.ch/allModules/28156_M_An2I.html',
-              categories: [
-                'Mathematik und Physik (Kat_MaPh)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Automaten und Sprachen (M_AutoSpr / MN)',
-              url: 'https://studien.rj.ost.ch/allModules/24404_M_AutoSpr.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Betriebssysteme 2 (M_Bsys2 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/37903_M_Bsys2.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [
-                'Software Engineering STD_21 (Profil)',
-              ],
-            },
-            {
-              name: 'Objektorientierte Programmierung 2 (M_OOP2 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/38910_M_OOP2.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Experimentieren und Evaluieren f\u00fcr Informatik (M_ExEv / I)',
-              url: 'https://studien.rj.ost.ch/allModules/24381_M_ExEv.html',
-              categories: [
-                'Mathematik und Physik (Kat_MaPh)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-          ],
-        },
-        {
-          number: 3,
-          modules: [
-            {
-              name: 'Web Engineering 1 (M_WE1 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/38891_M_WE1.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Algorithmen und Datenstrukturen (M_AlgDat / I)',
-              url: 'https://studien.rj.ost.ch/allModules/38881_M_AlgDat.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'AI Foundations (M_AIFo / I)',
-              url: 'https://studien.rj.ost.ch/allModules/38784_M_AIFo.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Digitale Codierungen (M_DigCod / I)',
-              url: 'https://studien.rj.ost.ch/allModules/38920_M_DigCod.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Computernetze 1 (M_CN1 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/39084_M_CN1.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 6,
-              focuses: [],
-            },
-          ],
-        },
-        {
-          number: 4,
-          modules: [
-            {
-              name: 'Parallele Programmierung (M_ParProg / I)',
-              url: 'https://studien.rj.ost.ch/allModules/31603_M_ParProg.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [
-                'Software Engineering STD_21 (Profil)',
-              ],
-            },
-            {
-              name: 'Secure Software (M_SecSoW / I)',
-              url: 'https://studien.rj.ost.ch/allModules/40311_M_SecSoW.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [
-                'Software Engineering STD_21 (Profil)',
-                'Cybersecurity STD_21 (Profil)',
-              ],
-            },
-            {
-              name: 'AI Applications (M_AIAp / I)',
-              url: 'https://studien.rj.ost.ch/allModules/38785_M_AIAp.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [
-                'Frontend Engineering STD_21 (Profil)',
-                'Data Engineering and Machine Intelligence STD_21 (Profil)',
-              ],
-            },
-            {
-              name: 'Data Engineering (M_DatEng / I)',
-              url: 'https://studien.rj.ost.ch/allModules/36038_M_DatEng.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [
-                'Data Engineering and Machine Intelligence STD_21 (Profil)',
-              ],
-            },
-            {
-              name: 'Cyber Security Foundations (M_CySec / I)',
-              url: 'https://studien.rj.ost.ch/allModules/36478_M_CySec.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Functional Programming  (M_FP / I)',
-              url: 'https://studien.rj.ost.ch/allModules/39143_M_FP.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Rahmenausbildung (Kat_RA)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-          ],
-        },
-        {
-          number: 5,
-          modules: [
-            {
-              name: 'Compilerbau (M_CoBau / I)',
-              url: 'https://studien.rj.ost.ch/allModules/40663_M_CoBau.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: '.Net Technologien (M_MsTe / I)',
-              url: 'https://studien.rj.ost.ch/allModules/37247_M_MsTe.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [
-                'Software Engineering STD_21 (Profil)',
-              ],
-            },
-            {
-              name: 'C++ (M_CPl / I)',
-              url: 'https://studien.rj.ost.ch/allModules/24357_M_CPl.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [
-                'Software Engineering STD_21 (Profil)',
-              ],
-            },
-            {
-              name: 'SE Practices 1 (M_SEP1 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/39203_M_SEP1.html',
-              categories: [
-                'Engineering Practice (I_EP)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Rhetorische Kommunikation f\u00fcr IngenieurInnen (M_RheKI / KG)',
-              url: 'https://studien.rj.ost.ch/allModules/31909_M_RheKI.html',
-              categories: [
-                'Kommunikation und Englisch (I_KomEng)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'English: The World of Science (M_EnglScience / KG)',
-              url: 'https://studien.rj.ost.ch/allModules/36091_M_EnglScience.html',
-              categories: [
-                'Kommunikation und Englisch (I_KomEng)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-          ],
-        },
-        {
-          number: 6,
-          modules: [
-            {
-              name: 'C++ Advanced (M_CPlA / I)',
-              url: 'https://studien.rj.ost.ch/allModules/28684_M_CPlA.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Distributed Systems (M_DSy / I)',
-              url: 'https://studien.rj.ost.ch/allModules/39054_M_DSy.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [
-                'Software Engineering STD_21 (Profil)',
-              ],
-            },
-            {
-              name: 'SE Practices 2 (M_SEP2 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/39000_M_SEP2.html',
-              categories: [
-                'Engineering Practice (I_EP)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'SE Project (M_SEProj / I)',
-              url: 'https://studien.rj.ost.ch/allModules/39012_M_SEProj.html',
-              categories: [
-                'Engineering Practice (I_EP)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Gesellschaft, Wirtschaft und Recht (M_KatGWR / KG)',
-              url: 'https://studien.rj.ost.ch/allModules/38418_M_KatGWR.html',
-              categories: [
-                'Gesellschaft, Wirtschaft und Recht (I-gwr)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Physik Anwendungen f\u00fcr Informatik (M_PhAI / MN)',
-              url: 'https://studien.rj.ost.ch/allModules/36992_M_PhAI.html',
-              categories: [
-                'Mathematik und Physik (Kat_MaPh)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-          ],
-        },
-        {
-          number: 7,
-          modules: [
-            {
-              name: 'Patterns und Frameworks (M_PF / I)',
-              url: 'https://studien.rj.ost.ch/allModules/39045_M_PF.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [
-                'Software Engineering STD_21 (Profil)',
-              ],
-            },
-            {
-              name: 'Application Architecture (M_AppArch / I)',
-              url: 'https://studien.rj.ost.ch/allModules/28236_M_AppArch.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [
-                'Software Engineering STD_21 (Profil)',
-                'Frontend Engineering STD_21 (Profil)',
-              ],
-            },
-            {
-              name: 'Studienarbeit Informatik (M_SAI21 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/39016_M_SAI21.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Studien- Bachelorarbeit (I_SaBa)',
-              ],
-              ects: 8,
-              focuses: [],
-            },
-            {
-              name: 'Projekt- und Qualit\u00e4tsmanagement (M_PmQm / I)',
-              url: 'https://studien.rj.ost.ch/allModules/28231_M_PmQm.html',
-              categories: [
-                'Gesellschaft, Wirtschaft und Recht (I-gwr)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-            {
-              name: 'Kommunikation 2 f\u00fcr IngenieurInnen  (Teamkommunikation) (M_KommIng2 / KG)',
-              url: 'https://studien.rj.ost.ch/allModules/37397_M_KommIng2.html',
-              categories: [
-                'Kommunikation und Englisch (I_KomEng)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-          ],
-        }, {
-          number: 8,
-          modules: [
-            {
-              name: 'Cloud Solutions (M_CldSol / I)',
-              url: 'https://studien.rj.ost.ch/allModules/37167_M_CldSol.html',
-              categories: [
-                'Aufbau (I_Auf)',
-                'Informatik (I_Inf)',
-              ],
-              ects: 4,
-              focuses: [
-                'Frontend Engineering STD_21 (Profil)',
-                'Data Engineering and Machine Intelligence STD_21 (Profil)',
-              ],
-            },
-            {
-              name: 'Bachelor-Arbeit Informatik (M_BAI14 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/24809_M_BAI14.html',
-              categories: [
-                'Informatik (I_Inf)',
-                'Studien- Bachelorarbeit (I_SaBa)',
-              ],
-              ects: 12,
-              focuses: [],
-            },
-            {
-              name: 'Wirtschaftsinformatik 2: Gesch\u00e4ftsprozessmanagement (M_WI2 / I)',
-              url: 'https://studien.rj.ost.ch/allModules/24453_M_WI2.html',
-              categories: [
-                'Gesellschaft, Wirtschaft und Recht (I-gwr)',
-              ],
-              ects: 4,
-              focuses: [],
-            },
-          ],
-        },
-      ],
+      semesters: [],
       allModules: [],
-      allCategories: [],
+      categories: [],
       totalPlanned: 0,
       totalEarned: 0,
       lastSemester: 2,
     };
   },
+  computed: {
+    mappedCategories() {
+      return this.categories.map((category) => ({
+        earnedCredits: this.getEarnedCredits(category),
+        plannedCredits: this.getPlannedCredits(category),
+        ...category,
+      }));
+    },
+  },
   components: { Semester },
   methods: {
-    getAllModules() {
+    loadModules() {
       fetch(`${BASE_URL}${ROUTE_MODULES}`)
         .then((response) => {
           if (response.ok) {
@@ -560,50 +83,22 @@ export default {
           }
         });
     },
-    getCategories() {
+    loadCategories() {
       fetch(`${BASE_URL}${ROUTE_CATEGORIES}`)
         .then((response) => {
           if (response.ok) {
             response.json()
               .then((categories) => {
-                categories.forEach((category) => {
-                  // eslint-disable-next-line no-param-reassign
-                  category.earnedCredits = 0;
-                  // eslint-disable-next-line no-param-reassign
-                  category.plannedCredits = 0;
-                  this.semesters.forEach((semester) => {
-                    semester.modules.forEach((module) => {
-                      if (module.categories.includes(category.name)) {
-                        if (semester.number < this.lastSemester) {
-                          // eslint-disable-next-line no-param-reassign
-                          category.earnedCredits += module.ects;
-                        }
-                        // eslint-disable-next-line no-param-reassign
-                        category.plannedCredits += module.ects;
-                      }
-                    });
-                  });
-                });
-                this.allCategories = categories;
+                this.categories = categories;
               });
           }
         });
     },
     addModuleToSemester(offset, module) {
       this.semesters[offset].modules.push(module);
-      this.updateStatistics();
     },
     removeModuleFromSemester(offsetSemesters, offsetModules) {
       this.semesters[offsetSemesters].modules.splice(offsetModules, 1);
-      this.updateStatistics();
-    },
-    updateStatistics() {
-      this.totalPlanned = 0;
-      this.totalEarned = 0;
-      this.allCategories.forEach((category) => {
-        this.totalPlanned += category.totalPlanned;
-        this.totalEarned += category.totalEarned;
-      });
     },
     updateUrlFragment() {
       window.location.hash = `plan/${this.semesters
@@ -615,11 +110,36 @@ export default {
         (semester) => semester.modules.some(module => module.name === moduleName),
       )?.number;
     },
+    getEarnedCredits(category) {
+      let earnedEcts = 0;
+      this.semesters.forEach((semester) => {
+        if (semester.number <= this.lastSemester) {
+          semester.modules.forEach((module) => {
+            if (module.categories[0] === category.name) {
+              earnedEcts += module.ects;
+              this.totalEarned += module.ects;
+            }
+          });
+        }
+      });
+      return earnedEcts;
+    },
+    getPlannedCredits(category) {
+      let totalEcts = 0;
+      this.semesters.forEach((semester) => {
+        semester.modules.forEach((module) => {
+          if (module.categories[0] === category.name) {
+            totalEcts += module.ects;
+            this.totalPlanned += module.ects;
+          }
+        });
+      });
+      return totalEcts;
+    },
   },
   mounted() {
-    this.getAllModules();
-    this.getCategories();
-    setTimeout(this.updateStatistics, 500);
+    this.loadModules();
+    this.loadCategories();
   },
 };
 </script>
