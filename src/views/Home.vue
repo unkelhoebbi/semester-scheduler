@@ -60,9 +60,28 @@
       </article>
     </div>
     <div class="column">
-      <section>
-        <img src="../assets/this_is_fine.jpg">
-      </section>
+      <article>
+        <h2 class="subtitle">Vertiefungen</h2>
+        <table>
+          <thead>
+          <tr>
+            <th class="p-2">Name</th>
+            <th class="p-8">Modules still needed</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr
+            v-for="focus in mappedFocuses"
+            :key="focus.name">
+            <td class="p-2">
+              {{ focus.name }}
+            </td>
+            <td class="p-8">{{ focus.modules }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </article>
+
     </div>
   </div>
 </template>
@@ -73,6 +92,7 @@ import Semester from '../components/Semester.vue';
 const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/1.0/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
+const ROUTE_FOCUSES = '/focuses.join';
 export default {
   name: 'Home',
   data() {
@@ -80,6 +100,7 @@ export default {
       semesters: [],
       modules: [],
       categories: [],
+      focuses: [],
       lastSemesterNumber: 0,
     };
   },
@@ -90,6 +111,12 @@ export default {
         plannedCredits: this.getPlannedCredits(category),
         ...category,
       }));
+    },
+    mappedFocuses() {
+      return this.focuses;
+      /* return this.focuses.map((focus) => ({
+         focus.filter(this.modules )
+      })); */
     },
     totalPlannedEcts() {
       return this.getTotalEcts(true);
@@ -120,6 +147,17 @@ export default {
             response.json()
               .then((categories) => {
                 this.categories = categories;
+              });
+          }
+        });
+    },
+    loadFocuses() {
+      fetch(`${BASE_URL}${ROUTE_FOCUSES}`)
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((focuses) => {
+                this.focuses = focuses;
               });
           }
         });
