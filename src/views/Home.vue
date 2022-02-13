@@ -52,7 +52,7 @@
 <script>
 import Semester from '../components/Semester.vue';
 
-const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/main/data';
+const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/1.0/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
 const CATEGORY_CLASS_MAP = {
