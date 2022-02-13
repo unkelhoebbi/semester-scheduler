@@ -1,41 +1,59 @@
 <template>
-  <h1 class="title">Plane dein Semester</h1>
+  <h1 class="title">Plan your semesters</h1>
+  <label>
+    Last Semester
+    <select v-model="lastSemesterNumber">
+      <option
+        v-for="semester in semesters"
+        :key="semester.number">
+        {{ semester.number }}
+      </option>
+    </select>
+  </label>
   <div class="columns">
     <div class="column semester" v-for="semester in semesters" :key="semester.name">
       <Semester
         :number="semester.number"
         v-model:modules="semester.modules"
-        :all-modules="allModules"
+        :all-modules="modules"
       ></Semester>
     </div>
   </div>
   <div class="columns">
     <div class="column">
       <article>
-        <H2 class="subtitle">Übersicht Kategorien/Credits</h2>
+        <h2 class="subtitle">Overview ECTS</h2>
         <table>
           <thead>
           <tr>
             <th class="p-2">Name</th>
-            <th class="p-2">Mögliche Credits</th>
-            <th class="p-2">Geplante Credits</th>
+            <th class="p-2">Total</th>
+            <th class="p-2">Required</th>
+            <th class="p-2">Earned</th>
+            <th class="p-2">Planned</th>
+            <th class="p-2">Spatzig 🐤</th>
           </tr>
           </thead>
           <tbody>
           <tr
-            v-for="category in allCategories"
+            v-for="category in mappedCategories"
             :key="category.name"
             v-bind:class="category.categoryClass">
             <td class="p-2">
               {{ category.name }}
             </td>
-            <td class="p-2">{{ category.possibleCredits }}</td>
+            <td class="p-2">{{ category.total_ects }}</td>
+            <td class="p-2">{{ category.required_ects }}</td>
             <td class="p-2">{{ category.earnedCredits }}</td>
+            <td class="p-2">{{ category.plannedCredits }}</td>
+            <td class="p-2">{{ category.total_ects - category.required_ects }}</td>
           </tr>
           <tr>
-            <td class="p-2">Total geplante</td>
+            <td class="p-2">Total</td>
             <td></td>
-            <td class="p-2">{{ totalPlanned }}</td>
+            <td></td>
+            <td class="p-2">{{ totalEarnedEcts }}</td>
+            <td class="p-2">{{ totalPlannedEcts }}</td>
           </tr>
           </tbody>
         </table>
@@ -55,28 +73,57 @@ import Semester from '../components/Semester.vue';
 const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/1.0/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
-const CATEGORY_CLASS_MAP = {
-  'Aufbau (I_Auf)': 'category-1',
-  'Engineering Practice (I_EP)': 'category-2',
-  'Gesellschaft, Wirtschaft und Recht (I-gwr)': 'category-3',
-  'Informatik (I_Inf)': 'category-4',
-  'Kommunikation und Englisch (I_KomEng)': 'category-5',
-  'Mathematik und Physik (Kat_MaPh)': 'category-6',
-  'Rahmenausbildung (Kat_RA)': 'category-7',
-  'Studien- Bachelorarbeit (I_SaBa)': 'category-8',
-};
 export default {
   name: 'Home',
   data() {
     return {
       semesters: [],
-      allModules: null,
-      allCategories: null,
-      totalPlanned: 0,
+      modules: [],
+      categories: [],
+      lastSemesterNumber: 0,
     };
+  },
+  computed: {
+    mappedCategories() {
+      return this.categories.map((category) => ({
+        earnedCredits: this.getEarnedCredits(category),
+        plannedCredits: this.getPlannedCredits(category),
+        ...category,
+      }));
+    },
+    totalPlannedEcts() {
+      return this.getTotalEcts(true);
+    },
+    totalEarnedEcts() {
+      return this.getTotalEcts();
+    },
   },
   components: { Semester },
   methods: {
+    loadModules() {
+      fetch(`${BASE_URL}${ROUTE_MODULES}`)
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((modules) => {
+                this.modules = modules;
+                this.restorePlanFromUrl();
+                this.loadCategories();
+              });
+          }
+        });
+    },
+    loadCategories() {
+      fetch(`${BASE_URL}${ROUTE_CATEGORIES}`)
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((categories) => {
+                this.categories = categories;
+              });
+          }
+        });
+    },
     restorePlanFromUrl() {
       const path = window.location.hash;
       if (path.startsWith('#/plan/')) {
@@ -87,57 +134,9 @@ export default {
             number: index + 1,
             modules: semester
               .split('_')
-              .map((moduleId) => this.allModules.find((module) => module.id === moduleId)),
+              .map((moduleId) => this.modules.find((module) => module.id === moduleId)),
           }));
       }
-    },
-    getAllModules(callback) {
-      fetch(`${BASE_URL}${ROUTE_MODULES}`).then((response) => {
-        if (response.ok) {
-          response.json().then((modules) => {
-            this.allModules = modules;
-            callback();
-          });
-        }
-      });
-    },
-    getCategories() {
-      fetch(`${BASE_URL}${ROUTE_CATEGORIES}`).then((response) => {
-        if (response.ok) {
-          response.json().then((categories) => {
-            categories.forEach((category) => {
-              // eslint-disable-next-line no-param-reassign
-              category.categoryClass = CATEGORY_CLASS_MAP[category.name];
-              // eslint-disable-next-line no-param-reassign
-              category.possibleCredits = 0;
-              // eslint-disable-next-line no-param-reassign
-              category.earnedCredits = 0;
-              this.allModules.forEach((module) => {
-                if (module.categories.includes(category.name)) {
-                  // eslint-disable-next-line no-param-reassign
-                  category.possibleCredits += module.ects;
-                }
-              });
-              this.semesters.forEach((semester) => {
-                semester.modules.forEach((module) => {
-                  if (module.categories.includes(category.name)) {
-                    // eslint-disable-next-line no-param-reassign
-                    category.earnedCredits += module.ects;
-                  }
-                });
-              });
-            });
-            this.allCategories = categories;
-          });
-        }
-      });
-    },
-    updateTotalPlanned() {
-      this.semesters.forEach((semester) => {
-        semester.modules.forEach((module) => {
-          this.totalPlanned += module.ects;
-        });
-      });
     },
     updateUrlFragment() {
       window.location.hash = `plan/${this.semesters
@@ -149,13 +148,47 @@ export default {
         (semester) => semester.modules.some(module => module.name === moduleName),
       )?.number;
     },
+    getEarnedCredits(category) {
+      let earnedEcts = 0;
+      this.semesters.forEach((semester) => {
+        if (semester.number <= this.lastSemester) {
+          semester.modules.forEach((module) => {
+            if (module.categories[0] === category.name) {
+              earnedEcts += module.ects;
+            }
+          });
+        }
+      });
+      return earnedEcts;
+    },
+    getPlannedCredits(category) {
+      let totalEcts = 0;
+      this.semesters.forEach((semester) => {
+        semester.modules.forEach((module) => {
+          if (module.categories[0] === category.name) {
+            totalEcts += module.ects;
+          }
+        });
+      });
+      return totalEcts;
+    },
+    getTotalEcts(includePlanned = false) {
+      return this.semesters
+        .filter((semester) => semester.number <= this.lastSemesterNumber || includePlanned)
+        .flatMap((semester) => semester.modules)
+        .reduce((previousTotal, module) => previousTotal + module.ects, 0);
+    },
+    addModule(semesterNumber, moduleName) {
+      const module = this.modules.find((item) => item.name === moduleName);
+      this.semesters[semesterNumber - 1].modules.push(module);
+      this.updateUrlFragment();
+    },
+    removeModule(semesterNumber, modulesIndex) {
+      this.semesters[semesterNumber - 1].modules.splice(modulesIndex, 1);
+    },
   },
   mounted() {
-    this.getAllModules(() => {
-      this.restorePlanFromUrl();
-      this.getCategories();
-      this.updateTotalPlanned();
-    });
+    this.loadModules();
 
     window.addEventListener('hashchange', this.restorePlanFromUrl);
   },
