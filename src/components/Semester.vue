@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     countTotalEcts() {
-      return this.modules.reduce((a, b) => a + (b.ects || 0), 0);
+      return this.modules.reduce((previousValue, module) => previousValue + module.ects, 0);
     },
     addModule() {
       const blockingSemesterNumber = this.$parent.getPlannedSemesterForModule(
