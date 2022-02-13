@@ -80,13 +80,14 @@ export default {
         console.warn(`Module ${this.additionalModule} is already in semester ${blockingSemesterNumber}`);
         return;
       }
-      const module = this.allModules.find((item) => item.name === this.additionalModule);
-      // eslint-disable-next-line vue/no-mutating-props
-      this.modules.push(module);
-      this.additionalModule = null;
-      this.isAddingNewModule = false;
-      this.updateEctsTotal();
-      this.$parent.updateUrlFragment();
+      this.$parent.addModule(this.number, this.additionalModule);
+      // const module = this.allModules.find((item) => item.name === this.additionalModule);
+      // // eslint-disable-next-line vue/no-mutating-props
+      // this.modules.push(module);
+      // this.additionalModule = null;
+      // this.isAddingNewModule = false;
+      // this.updateEctsTotal();
+      // this.$parent.updateUrlFragment();
     },
     removeModule(moduleName) {
       const moduleToDelete = this.modules.filter((item) => item.name === moduleName);
