@@ -1,7 +1,7 @@
 <template>
-  <h1 class="title">Plan your semesters</h1>
+  <h1 class="title">Plane deine Module</h1>
   <label>
-    Last Semester
+    Letztes erfolgreich abgeschlossenes Semester
     <select v-model="lastSemesterNumber">
       <option
         v-for="semester in semesters"
@@ -18,8 +18,8 @@
         :all-modules="modules"
       ></Semester>
     </div>
-    <div>
-      <button class="p-2 button-add" v-on:click="addSemester">+</button>
+    <div class="column add-semester">
+      <button class="p-2 add-semester-btn has-text-weight-bold" v-on:click="addSemester">+</button>
     </div>
   </div>
   <div class="columns">
@@ -138,9 +138,10 @@ export default {
             modules: semester
               .split('_')
               .map((moduleId) => {
-                const module = this.modules.find((module) => module.id === moduleId);
-                if (module == null) console.warn(`Module with id: ${moduleId} could not be restored`);
-                return module;
+                const newModule = this.modules.find((module) => module.id === moduleId);
+                // eslint-disable-next-line no-console
+                if (newModule == null) console.warn(`Module with id: ${moduleId} could not be restored`);
+                return newModule;
               })
               .filter((module) => module != null),
           }));
@@ -148,7 +149,8 @@ export default {
     },
     updateUrlFragment() {
       window.location.hash = `plan/${this.semesters
-        .map((semester) => semester.modules.map((module) => module.id).join('_'))
+        .map((semester) => semester.modules.map((module) => module.id)
+          .join('_'))
         .join('-')}`;
     },
     getPlannedSemesterForModule(moduleName) {
@@ -211,37 +213,61 @@ export default {
 <style scoped>
 .semester {
   margin: 1.5rem 0.5rem 0 0.5rem;
+  border-radius: 5px;
+  padding: 21px;
+  background: #ececec;
 }
+
 .category-1 {
   border-bottom: 2px solid #e17055;
   border-left: 2px solid #e17055;
 }
+
 .category-2 {
   border-bottom: 2px solid #e84393;
   border-left: 2px solid #e84393;
 }
+
 .category-3 {
   border-bottom: 2px solid #ff7675;
   border-left: 2px solid #ff7675;
 }
+
 .category-4 {
   border-bottom: 2px solid #00cec9;
   border-left: 2px solid #00cec9;
 }
+
 .category-5 {
   border-bottom: 2px solid #00b894;
   border-left: 2px solid #00b894;
 }
+
 .category-6 {
   border-bottom: 2px solid #a29bfe;
   border-left: 2px solid #a29bfe;
 }
+
 .category-7 {
   border-bottom: 2px solid #55efc4;
   border-left: 2px solid #55efc4;
 }
+
 .category-8 {
   border-bottom: 2px solid #fdcb6e;
   border-left: 2px solid #fdcb6e;
+}
+
+.add-semester {
+  max-width: 2.5rem;
+  padding-top: 3.25rem;
+}
+
+.add-semester-btn {
+  background: black;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
 }
 </style>
