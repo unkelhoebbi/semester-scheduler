@@ -92,7 +92,7 @@ import Semester from '../components/Semester.vue';
 const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/1.0/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
-const ROUTE_FOCUSES = '/focuses.join';
+const ROUTE_FOCUSES = '/focuses.json';
 export default {
   name: 'Home',
   data() {
@@ -113,10 +113,13 @@ export default {
       }));
     },
     mappedFocuses() {
-      return this.focuses;
-      /* return this.focuses.map((focus) => ({
-         focus.filter(this.modules )
-      })); */
+      const focuses = [];
+      this.focuses.forEach((focus) => {
+        const plannedModules = this.semesters.flatMap((semester) => semester.modules).map((module) => module.name);
+        focus.modules.filter((moduleName) => !plannedModules.includes(moduleName));
+        focuses.push(focus);
+      });
+      return focuses;
     },
     totalPlannedEcts() {
       return this.getTotalEcts(true);
@@ -136,6 +139,7 @@ export default {
                 this.modules = modules;
                 this.restorePlanFromUrl();
                 this.loadCategories();
+                this.loadFocuses();
               });
           }
         });
