@@ -18,6 +18,9 @@
         :all-modules="modules"
       ></Semester>
     </div>
+    <div>
+      <button class="p-2 button-add" v-on:click="addSemester">+</button>
+    </div>
   </div>
   <div class="columns">
     <div class="column">
@@ -134,7 +137,12 @@ export default {
             number: index + 1,
             modules: semester
               .split('_')
-              .map((moduleId) => this.modules.find((module) => module.id === moduleId)),
+              .map((moduleId) => {
+                const module = this.modules.find((module) => module.id === moduleId);
+                if (module == null) console.warn(`Module with id: ${moduleId} could not be restored`);
+                return module;
+              })
+              .filter((module) => module != null),
           }));
       }
     },
@@ -187,10 +195,15 @@ export default {
       this.semesters[semesterNumber - 1].modules.splice(modulesIndex, 1);
       this.updateUrlFragment();
     },
+    addSemester() {
+      this.semesters.push({
+        number: this.semesters.length + 1,
+        modules: [],
+      });
+    },
   },
   mounted() {
     this.loadModules();
-
     window.addEventListener('hashchange', this.restorePlanFromUrl);
   },
 };
