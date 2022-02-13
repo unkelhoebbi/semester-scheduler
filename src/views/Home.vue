@@ -151,9 +151,9 @@ export default {
     getEarnedCredits(category) {
       let earnedEcts = 0;
       this.semesters.forEach((semester) => {
-        if (semester.number <= this.lastSemester) {
+        if (semester.number <= this.lastSemesterNumber) {
           semester.modules.forEach((module) => {
-            if (module.categories[0] === category.name) {
+            if (module.categories.includes(category.name)) {
               earnedEcts += module.ects;
             }
           });
@@ -165,7 +165,7 @@ export default {
       let totalEcts = 0;
       this.semesters.forEach((semester) => {
         semester.modules.forEach((module) => {
-          if (module.categories[0] === category.name) {
+          if (module.categories.includes(category.name)) {
             totalEcts += module.ects;
           }
         });
