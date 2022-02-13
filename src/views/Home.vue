@@ -76,7 +76,7 @@
             <td class="p-2">
               {{ focus.name }}
             </td>
-            <td class="p-8">{{ focus.modules }}</td>
+            <td class="p-8">{{ focus.filteredModules }}</td>
           </tr>
           </tbody>
         </table>
@@ -112,14 +112,18 @@ export default {
         ...category,
       }));
     },
+    plannedModules() {
+      return this.semesters
+        .flatMap((semester) => semester.modules);
+    },
     mappedFocuses() {
-      const focuses = [];
-      this.focuses.forEach((focus) => {
-        const plannedModules = this.semesters.flatMap((semester) => semester.modules).map((module) => module.name);
-        focus.modules.filter((moduleName) => !plannedModules.includes(moduleName));
-        focuses.push(focus);
-      });
-      return focuses;
+      const plannedModuleNames = this.plannedModules.map(module => module.name);
+      return this.focuses.map((focus) => ({
+        ...focus,
+        filteredModules: focus.modules.filter(
+          (moduleName) => !plannedModuleNames.includes(moduleName),
+        ),
+      }));
     },
     totalPlannedEcts() {
       return this.getTotalEcts(true);
