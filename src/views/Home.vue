@@ -2,7 +2,7 @@
   <h1 class="title">Plan your semesters</h1>
   <label>
     Last Semester
-    <select v-model="lastSemester">
+    <select v-model="lastSemesterNumber">
       <option
         v-for="semester in semesters"
         :key="semester.number">
@@ -31,6 +31,7 @@
             <th class="p-2">Required</th>
             <th class="p-2">Earned</th>
             <th class="p-2">Planned</th>
+            <th class="p-2">Spatzig 🐤</th>
           </tr>
           </thead>
           <tbody>
@@ -45,10 +46,13 @@
             <td class="p-2">{{ category.required_ects }}</td>
             <td class="p-2">{{ category.earnedCredits }}</td>
             <td class="p-2">{{ category.plannedCredits }}</td>
+            <td class="p-2">{{ category.total_ects - category.required_ects }}</td>
           </tr>
           <tr>
-            <td class="p-2">Total geplante</td>
+            <td class="p-2">Total</td>
             <td></td>
+            <td></td>
+            <td class="p-2">{{ totalEarnedEcts }}</td>
             <td class="p-2">{{ totalPlannedEcts }}</td>
           </tr>
           </tbody>
@@ -76,7 +80,7 @@ export default {
       semesters: [],
       modules: [],
       categories: [],
-      lastSemester: 0,
+      lastSemesterNumber: 0,
     };
   },
   computed: {
@@ -91,7 +95,7 @@ export default {
       return this.getTotalEcts(true);
     },
     totalEarnedEcts() {
-      return this.getTotalEcts(true);
+      return this.getTotalEcts();
     },
   },
   components: { Semester },
@@ -168,15 +172,19 @@ export default {
       });
       return totalEcts;
     },
-    getTotalEcts(isPlanned = false) {
+    getTotalEcts(includePlanned = false) {
       return this.semesters
-        .filter((semester) => !isPlanned || semester.number <= this.lastSemester)
+        .filter((semester) => semester.number <= this.lastSemesterNumber || includePlanned)
         .flatMap((semester) => semester.modules)
         .reduce((previousTotal, module) => previousTotal + module.ects, 0);
     },
     addModule(semesterNumber, moduleName) {
       const module = this.modules.find((item) => item.name === moduleName);
       this.semesters[semesterNumber - 1].modules.push(module);
+      this.updateUrlFragment();
+    },
+    removeModule(semesterNumber, modulesIndex) {
+      this.semesters[semesterNumber - 1].modules.splice(modulesIndex, 1);
     },
   },
   mounted() {

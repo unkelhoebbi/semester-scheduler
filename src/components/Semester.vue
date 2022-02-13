@@ -31,7 +31,7 @@
     </datalist>
   </div>
   <div class="column">
-    <p>Total ECTS: {{ ectsTotal }}</p>
+    <p>Total ECTS: {{ getTotalEcts }}</p>
   </div>
 </div>
 </template>
@@ -60,16 +60,20 @@ export default {
       type: Array,
     },
   },
+  computed: {
+    getTotalEcts() {
+      return this.countTotalEcts();
+    },
+  },
   data() {
     return {
-      ectsTotal: 0,
       additionalModule: null,
       isAddingNewModule: false,
     };
   },
   methods: {
-    updateEctsTotal() {
-      this.ectsTotal = this.modules.reduce((a, b) => a + (b.ects || 0), 0);
+    countTotalEcts() {
+      return this.modules.reduce((a, b) => a + (b.ects || 0), 0);
     },
     addModule() {
       const blockingSemesterNumber = this.$parent.getPlannedSemesterForModule(
@@ -81,21 +85,13 @@ export default {
         return;
       }
       this.$parent.addModule(this.number, this.additionalModule);
-      // const module = this.allModules.find((item) => item.name === this.additionalModule);
-      // // eslint-disable-next-line vue/no-mutating-props
-      // this.modules.push(module);
-      // this.additionalModule = null;
-      // this.isAddingNewModule = false;
-      // this.updateEctsTotal();
-      // this.$parent.updateUrlFragment();
+      this.additionalModule = null;
+      this.isAddingNewModule = false;
     },
     removeModule(moduleName) {
       const moduleToDelete = this.modules.filter((item) => item.name === moduleName);
       const index = this.modules.indexOf(moduleToDelete[0]);
-      // eslint-disable-next-line vue/no-mutating-props
-      this.modules.splice(index, 1);
-      this.updateEctsTotal();
-      this.$parent.updateUrlFragment();
+      this.$parent.removeModule(this.number, index);
     },
     selectModuleClass() {
       this.modules.forEach((module) => {
@@ -106,7 +102,6 @@ export default {
     },
   },
   mounted() {
-    this.updateEctsTotal();
     this.selectModuleClass();
   },
 };
