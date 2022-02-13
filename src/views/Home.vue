@@ -185,6 +185,7 @@ export default {
     },
     removeModule(semesterNumber, modulesIndex) {
       this.semesters[semesterNumber - 1].modules.splice(modulesIndex, 1);
+      this.updateUrlFragment();
     },
   },
   mounted() {
