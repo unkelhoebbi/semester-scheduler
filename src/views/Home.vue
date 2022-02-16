@@ -61,33 +61,33 @@
     </div>
     <div class="column">
       <article>
-        <h2 class="subtitle">Vertiefungen</h2>
-        <table>
-          <thead>
-          <tr>
-            <th class="p-2">Name</th>
-            <th class="p-8">Modules still needed</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr
-            v-for="focus in mappedFocuses"
+        <h2 class="subtitle">Course focus</h2>
+        <accordion  v-for="focus in mappedFocuses"
             :key="focus.name">
-            <td class="p-2">
+          <template v-slot:title>
               {{ focus.name }}
-            </td>
-            <td class="p-8">{{ focus.filteredModules }}</td>
-          </tr>
-          </tbody>
-        </table>
+          </template>
+          <template v-slot:content>
+            <p v-if="!focus.filteredModules.length">
+              Congratulation! You meet all requirements to get this focus!
+            </p>
+            <p v-if="focus.filteredModules.length">
+              Some modules are missing. You still need following to gain the focus:
+            </p>
+            <ul >
+              <li v-for="filteredModule in focus.filteredModules"
+            :key="filteredModule">{{filteredModule}}</li>
+            </ul>
+          </template>
+        </accordion>
       </article>
-
     </div>
   </div>
 </template>
 
 <script>
 import Semester from '../components/Semester.vue';
+import Accordion from '../components/Accordion.vue';
 
 const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/1.0/data';
 const ROUTE_MODULES = '/modules.json';
@@ -132,7 +132,7 @@ export default {
       return this.getTotalEcts();
     },
   },
-  components: { Semester },
+  components: { Semester, Accordion },
   methods: {
     loadModules() {
       fetch(`${BASE_URL}${ROUTE_MODULES}`)
