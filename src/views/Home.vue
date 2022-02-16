@@ -27,37 +27,26 @@
       <article>
         <h2 class="subtitle">Overview ECTS</h2>
         <table>
-          <thead>
-          <tr>
-            <th class="p-2">Name</th>
-            <th class="p-2">Total</th>
-            <th class="p-2">Required</th>
-            <th class="p-2">Earned</th>
-            <th class="p-2">Planned</th>
-            <th class="p-2">Spatzig 🐤</th>
-          </tr>
-          </thead>
           <tbody>
           <tr
             v-for="category in mappedCategories"
             :key="category.name"
             v-bind:class="category.categoryClass">
-            <td class="p-2">
+            <td style="vertical-align:bottom;padding-right:1em;text-align:end">
               {{ category.name }}
             </td>
-            <td class="p-2">{{ category.total_ects }}</td>
-            <td class="p-2">{{ category.required_ects }}</td>
-            <td class="p-2">{{ category.earnedCredits }}</td>
-            <td class="p-2">{{ category.plannedCredits }}</td>
-            <td class="p-2">{{ category.total_ects - category.required_ects }}</td>
+            <td style="padding-top:8px">
+              <BeautifulProgressIndicator
+              :required="category.required_ects"
+              :earned="category.earnedCredits"
+              :planned="category.plannedCredits"
+              :color="category.color"
+              ></BeautifulProgressIndicator>
+            </td>
           </tr>
           <tr>
-            <td class="p-2">Total</td>
-            <td></td>
-            <td></td>
-            <td class="p-2">{{ totalEarnedEcts }}</td>
-            <td class="p-2">{{ totalPlannedEcts }}</td>
-          </tr>
+            <td class="p-2">Total: TODO</td>
+            </tr>
           </tbody>
         </table>
       </article>
@@ -72,6 +61,7 @@
 
 <script>
 import Semester from '../components/Semester.vue';
+import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
 
 const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/1.0/data';
 const ROUTE_MODULES = '/modules.json';
@@ -91,6 +81,7 @@ export default {
       return this.categories.map((category) => ({
         earnedCredits: this.getEarnedCredits(category),
         plannedCredits: this.getPlannedCredits(category),
+        color: `#${((1 << 24) * Math.random() | 0).toString(16)}`, // TODO
         ...category,
       }));
     },
@@ -101,7 +92,7 @@ export default {
       return this.getTotalEcts();
     },
   },
-  components: { Semester },
+  components: { Semester, BeautifulProgressIndicator },
   methods: {
     loadModules() {
       fetch(`${BASE_URL}${ROUTE_MODULES}`)
@@ -159,28 +150,18 @@ export default {
       )?.number;
     },
     getEarnedCredits(category) {
-      let earnedEcts = 0;
-      this.semesters.forEach((semester) => {
-        if (semester.number <= this.lastSemesterNumber) {
-          semester.modules.forEach((module) => {
-            if (module.categories.includes(category.name)) {
-              earnedEcts += module.ects;
-            }
-          });
-        }
-      });
-      return earnedEcts;
+      return this.semesters
+        .filter((semester) => semester.number <= this.lastSemesterNumber)
+        .flatMap((semester) => semester.modules)
+        .filter((module) => module.categories.includes(category.name))
+        .reduce((previousTotal, module) => previousTotal + module.ects, 0);
     },
     getPlannedCredits(category) {
-      let totalEcts = 0;
-      this.semesters.forEach((semester) => {
-        semester.modules.forEach((module) => {
-          if (module.categories.includes(category.name)) {
-            totalEcts += module.ects;
-          }
-        });
-      });
-      return totalEcts;
+      return this.semesters
+        .filter((semester) => semester.number > this.lastSemesterNumber)
+        .flatMap((semester) => semester.modules)
+        .filter((module) => module.categories.includes(category.name))
+        .reduce((previousTotal, module) => previousTotal + module.ects, 0);
     },
     getTotalEcts(includePlanned = false) {
       return this.semesters
