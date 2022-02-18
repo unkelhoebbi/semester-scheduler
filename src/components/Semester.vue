@@ -81,6 +81,7 @@ export default {
       );
       if (blockingSemesterNumber) {
         // TODO: display error message
+        // eslint-disable-next-line no-console
         console.warn(`Module ${this.additionalModule} is already in semester ${blockingSemesterNumber}`);
         return;
       }

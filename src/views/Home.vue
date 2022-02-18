@@ -1,7 +1,7 @@
 <template>
-  <h1 class="title">Plan your semesters</h1>
+  <h1 class="title">Plane deine Module</h1>
   <label>
-    Last Semester
+    Letztes erfolgreich abgeschlossenes Semester
     <select v-model="lastSemesterNumber">
       <option
         v-for="semester in semesters"
@@ -18,43 +18,35 @@
         :all-modules="modules"
       ></Semester>
     </div>
+    <div class="column add-semester">
+      <button class="p-2 add-semester-btn has-text-weight-bold" v-on:click="addSemester">+</button>
+    </div>
   </div>
   <div class="columns">
     <div class="column">
       <article>
         <h2 class="subtitle">Overview ECTS</h2>
         <table>
-          <thead>
-          <tr>
-            <th class="p-2">Name</th>
-            <th class="p-2">Total</th>
-            <th class="p-2">Required</th>
-            <th class="p-2">Earned</th>
-            <th class="p-2">Planned</th>
-            <th class="p-2">Spatzig 🐤</th>
-          </tr>
-          </thead>
           <tbody>
           <tr
             v-for="category in mappedCategories"
             :key="category.name"
             v-bind:class="category.categoryClass">
-            <td class="p-2">
+            <td style="vertical-align:bottom;padding-right:1em;text-align:end">
               {{ category.name }}
             </td>
-            <td class="p-2">{{ category.total_ects }}</td>
-            <td class="p-2">{{ category.required_ects }}</td>
-            <td class="p-2">{{ category.earnedCredits }}</td>
-            <td class="p-2">{{ category.plannedCredits }}</td>
-            <td class="p-2">{{ category.total_ects - category.required_ects }}</td>
+            <td style="padding-top:8px">
+              <BeautifulProgressIndicator
+              :required="category.required_ects"
+              :earned="category.earnedCredits"
+              :planned="category.plannedCredits"
+              :color="category.color"
+              ></BeautifulProgressIndicator>
+            </td>
           </tr>
           <tr>
-            <td class="p-2">Total</td>
-            <td></td>
-            <td></td>
-            <td class="p-2">{{ totalEarnedEcts }}</td>
-            <td class="p-2">{{ totalPlannedEcts }}</td>
-          </tr>
+            <td class="p-2">Total: TODO</td>
+            </tr>
           </tbody>
         </table>
       </article>
@@ -80,6 +72,7 @@
 <script>
 import Semester from '../components/Semester.vue';
 import Focus from '../components/Focus.vue';
+import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
 
 const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/1.0/data';
 const ROUTE_MODULES = '/modules.json';
@@ -101,6 +94,7 @@ export default {
       return this.categories.map((category) => ({
         earnedCredits: this.getEarnedCredits(category),
         plannedCredits: this.getPlannedCredits(category),
+        color: `#${((1 << 24) * Math.random() | 0).toString(16)}`, // TODO
         ...category,
       }));
     },
@@ -124,7 +118,7 @@ export default {
       return this.getTotalEcts();
     },
   },
-  components: { Semester, Focus },
+  components: { Semester, Focus, BeautifulProgressIndicator },
   methods: {
     loadModules() {
       fetch(`${BASE_URL}${ROUTE_MODULES}`)
@@ -172,13 +166,20 @@ export default {
             number: index + 1,
             modules: semester
               .split('_')
-              .map((moduleId) => this.modules.find((module) => module.id === moduleId)),
+              .map((moduleId) => {
+                const newModule = this.modules.find((module) => module.id === moduleId);
+                // eslint-disable-next-line no-console
+                if (newModule == null) console.warn(`Module with id: ${moduleId} could not be restored`);
+                return newModule;
+              })
+              .filter((module) => module != null),
           }));
       }
     },
     updateUrlFragment() {
       window.location.hash = `plan/${this.semesters
-        .map((semester) => semester.modules.map((module) => module.id).join('_'))
+        .map((semester) => semester.modules.map((module) => module.id)
+          .join('_'))
         .join('-')}`;
     },
     getPlannedSemesterForModule(moduleName) {
@@ -187,28 +188,18 @@ export default {
       )?.number;
     },
     getEarnedCredits(category) {
-      let earnedEcts = 0;
-      this.semesters.forEach((semester) => {
-        if (semester.number <= this.lastSemesterNumber) {
-          semester.modules.forEach((module) => {
-            if (module.categories.includes(category.name)) {
-              earnedEcts += module.ects;
-            }
-          });
-        }
-      });
-      return earnedEcts;
+      return this.semesters
+        .filter((semester) => semester.number <= this.lastSemesterNumber)
+        .flatMap((semester) => semester.modules)
+        .filter((module) => module.categories.includes(category.name))
+        .reduce((previousTotal, module) => previousTotal + module.ects, 0);
     },
     getPlannedCredits(category) {
-      let totalEcts = 0;
-      this.semesters.forEach((semester) => {
-        semester.modules.forEach((module) => {
-          if (module.categories.includes(category.name)) {
-            totalEcts += module.ects;
-          }
-        });
-      });
-      return totalEcts;
+      return this.semesters
+        .filter((semester) => semester.number > this.lastSemesterNumber)
+        .flatMap((semester) => semester.modules)
+        .filter((module) => module.categories.includes(category.name))
+        .reduce((previousTotal, module) => previousTotal + module.ects, 0);
     },
     getTotalEcts(includePlanned = false) {
       return this.semesters
@@ -223,11 +214,17 @@ export default {
     },
     removeModule(semesterNumber, modulesIndex) {
       this.semesters[semesterNumber - 1].modules.splice(modulesIndex, 1);
+      this.updateUrlFragment();
+    },
+    addSemester() {
+      this.semesters.push({
+        number: this.semesters.length + 1,
+        modules: [],
+      });
     },
   },
   mounted() {
     this.loadModules();
-
     window.addEventListener('hashchange', this.restorePlanFromUrl);
   },
 };
@@ -235,37 +232,61 @@ export default {
 <style scoped>
 .semester {
   margin: 1.5rem 0.5rem 0 0.5rem;
+  border-radius: 5px;
+  padding: 21px;
+  background: #ececec;
 }
+
 .category-1 {
   border-bottom: 2px solid #e17055;
   border-left: 2px solid #e17055;
 }
+
 .category-2 {
   border-bottom: 2px solid #e84393;
   border-left: 2px solid #e84393;
 }
+
 .category-3 {
   border-bottom: 2px solid #ff7675;
   border-left: 2px solid #ff7675;
 }
+
 .category-4 {
   border-bottom: 2px solid #00cec9;
   border-left: 2px solid #00cec9;
 }
+
 .category-5 {
   border-bottom: 2px solid #00b894;
   border-left: 2px solid #00b894;
 }
+
 .category-6 {
   border-bottom: 2px solid #a29bfe;
   border-left: 2px solid #a29bfe;
 }
+
 .category-7 {
   border-bottom: 2px solid #55efc4;
   border-left: 2px solid #55efc4;
 }
+
 .category-8 {
   border-bottom: 2px solid #fdcb6e;
   border-left: 2px solid #fdcb6e;
+}
+
+.add-semester {
+  max-width: 2.5rem;
+  padding-top: 3.25rem;
+}
+
+.add-semester-btn {
+  background: black;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
 }
 </style>
