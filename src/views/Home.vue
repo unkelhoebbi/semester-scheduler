@@ -140,9 +140,9 @@ export default {
       const plannedModuleNames = this.plannedModules.map(module => module.id);
       return this.focuses.map((focus) => ({
         ...focus,
-        filteredModules: focus.modules.filter(
-          (moduleId) => !plannedModuleNames.includes(moduleId),
-        ),
+        filteredModules: focus.modules
+          .filter((moduleId) => !plannedModuleNames.includes(moduleId))
+          .map((moduleId) => this.modules.find((module) => module.id === moduleId).name),
       }));
     },
     totalPlannedEcts() {
