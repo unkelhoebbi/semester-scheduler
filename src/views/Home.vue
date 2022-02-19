@@ -52,20 +52,32 @@
       </article>
     </div>
     <div class="column">
-      <section>
-        <img src="../assets/this_is_fine.jpg">
-      </section>
+      <article>
+        <h2 class="subtitle">Course focus</h2>
+        <div class="columns is-multiline">
+          <div v-for="focus in mappedFocuses"
+            :key="focus.name" class="column is-full">
+            <Focus
+              :name="focus.name"
+              :allModules="focus.modules"
+              :filteredModules="focus.filteredModules"
+            ></Focus>
+          </div>
+        </div>
+      </article>
     </div>
   </div>
 </template>
 
 <script>
 import Semester from '../components/Semester.vue';
+import Focus from '../components/Focus.vue';
 import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
 
 const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/1.0/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
+const ROUTE_FOCUSES = '/focuses.json';
 export default {
   name: 'Home',
   data() {
@@ -73,6 +85,7 @@ export default {
       semesters: [],
       modules: [],
       categories: [],
+      focuses: [],
       lastSemesterNumber: 0,
     };
   },
@@ -85,6 +98,19 @@ export default {
         ...category,
       }));
     },
+    plannedModules() {
+      return this.semesters
+        .flatMap((semester) => semester.modules);
+    },
+    mappedFocuses() {
+      const plannedModuleNames = this.plannedModules.map(module => module.name);
+      return this.focuses.map((focus) => ({
+        ...focus,
+        filteredModules: focus.modules.filter(
+          (moduleName) => !plannedModuleNames.includes(moduleName),
+        ),
+      }));
+    },
     totalPlannedEcts() {
       return this.getTotalEcts(true);
     },
@@ -92,7 +118,7 @@ export default {
       return this.getTotalEcts();
     },
   },
-  components: { Semester, BeautifulProgressIndicator },
+  components: { Semester, Focus, BeautifulProgressIndicator },
   methods: {
     loadModules() {
       fetch(`${BASE_URL}${ROUTE_MODULES}`)
@@ -103,6 +129,7 @@ export default {
                 this.modules = modules;
                 this.restorePlanFromUrl();
                 this.loadCategories();
+                this.loadFocuses();
               });
           }
         });
@@ -114,6 +141,17 @@ export default {
             response.json()
               .then((categories) => {
                 this.categories = categories;
+              });
+          }
+        });
+    },
+    loadFocuses() {
+      fetch(`${BASE_URL}${ROUTE_FOCUSES}`)
+        .then((response) => {
+          if (response.ok) {
+            response.json()
+              .then((focuses) => {
+                this.focuses = focuses;
               });
           }
         });
