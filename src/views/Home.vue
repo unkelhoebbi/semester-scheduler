@@ -155,6 +155,9 @@ export default {
   components: { Semester, Focus, BeautifulProgressIndicator },
   methods: {
     sumCredits: (previousTotal, module) => previousTotal + module.ects,
+    getColorForCategory(categoryId) {
+      return this.categories.find((category) => category.id === categoryId)?.color;
+    },
     loadModules() {
       fetch(`${BASE_URL}${ROUTE_MODULES}`)
         .then((response) => response.json())
@@ -239,8 +242,10 @@ export default {
       this.semesters[semesterNumber - 1].modules.push(module);
       this.updateUrlFragment();
     },
-    removeModule(semesterNumber, modulesIndex) {
-      this.semesters[semesterNumber - 1].modules.splice(modulesIndex, 1);
+    removeModule(semesterNumber, moduleId) {
+      this.semesters[semesterNumber - 1].modules = this.semesters[semesterNumber - 1].modules
+        .filter((module) => module.id !== moduleId);
+
       this.updateUrlFragment();
     },
     addSemester() {
