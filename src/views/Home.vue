@@ -137,11 +137,11 @@ export default {
         .flatMap((semester) => semester.modules);
     },
     mappedFocuses() {
-      const plannedModuleNames = this.plannedModules.map(module => module.name);
+      const plannedModuleNames = this.plannedModules.map(module => module.id);
       return this.focuses.map((focus) => ({
         ...focus,
         filteredModules: focus.modules.filter(
-          (moduleName) => !plannedModuleNames.includes(moduleName),
+          (moduleId) => !plannedModuleNames.includes(moduleId),
         ),
       }));
     },
