@@ -1,15 +1,26 @@
 <template>
-  <h1 class="title">Plane deine Module</h1>
-  <label>
-    Letztes erfolgreich abgeschlossenes Semester
-    <select v-model="lastSemesterNumber">
-      <option
-        v-for="semester in semesters"
-        :key="semester.number">
-        {{ semester.number }}
-      </option>
-    </select>
-  </label>
+  <div class="columns">
+    <div class="column">
+      <h1 class="title">Plane deine Module</h1>
+      <label>
+        Letztes erfolgreich abgeschlossenes Semester
+        <select v-model="lastSemesterNumber">
+          <option
+            v-for="semester in semesters"
+            :key="semester.number">
+            {{ semester.number }}
+          </option>
+        </select>
+      </label>
+    </div>
+    <div class="column is-narrow">
+      <Transition>
+        <div v-if="errorMsg" class="notification is-danger">
+          <span>{{ errorMsg }}</span>
+        </div>
+      </Transition>
+    </div>
+  </div>
   <div class="columns">
     <div class="column semester" v-for="semester in semesters" :key="semester.name">
       <Semester
@@ -87,6 +98,8 @@ export default {
       categories: [],
       focuses: [],
       lastSemesterNumber: 0,
+      errorMsg: null,
+      errorTimer: null,
     };
   },
   computed: {
@@ -222,6 +235,15 @@ export default {
         modules: [],
       });
     },
+    showErrorMsg(text) {
+      if (this.errorTimer !== null) {
+        clearTimeout(this.errorTimer);
+      }
+      this.errorMsg = text;
+      this.errorTimer = setTimeout(() => {
+        this.errorMsg = null;
+      }, 3000);
+    },
   },
   mounted() {
     this.loadModules();
@@ -275,6 +297,21 @@ export default {
 .category-8 {
   border-bottom: 2px solid #fdcb6e;
   border-left: 2px solid #fdcb6e;
+}
+
+.notification {
+  z-index: 999;
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+}
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 
 .add-semester {

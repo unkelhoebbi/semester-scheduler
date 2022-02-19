@@ -80,9 +80,12 @@ export default {
         this.additionalModule,
       );
       if (blockingSemesterNumber) {
-        // TODO: display error message
+        const text = `Module ${this.additionalModule} is already in semester ${blockingSemesterNumber}`;
         // eslint-disable-next-line no-console
-        console.warn(`Module ${this.additionalModule} is already in semester ${blockingSemesterNumber}`);
+        console.warn(text);
+        this.$parent.showErrorMsg(text);
+        this.additionalModule = null;
+        this.isAddingNewModule = false;
         return;
       }
       this.$parent.addModule(this.number, this.additionalModule);
