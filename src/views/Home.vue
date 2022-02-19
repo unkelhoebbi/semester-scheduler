@@ -56,8 +56,18 @@
             </td>
           </tr>
           <tr>
-            <td class="p-2">Total: TODO</td>
-            </tr>
+            <td style="vertical-align:bottom;padding-right:1em;text-align:end">
+              Total
+            </td>
+            <td style="padding-top:8px">
+              <BeautifulProgressIndicator
+              :required="180"
+              :earned="totalEarnedEcts"
+              :planned="totalPlannedEcts"
+              :color="`orange`"
+              ></BeautifulProgressIndicator>
+            </td>
+          </tr>
           </tbody>
         </table>
       </article>
@@ -85,7 +95,7 @@ import Semester from '../components/Semester.vue';
 import Focus from '../components/Focus.vue';
 import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
 
-const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/1.0/data';
+const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/2.0/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
 const ROUTE_FOCUSES = '/focuses.json';
@@ -125,37 +135,31 @@ export default {
       }));
     },
     totalPlannedEcts() {
-      return this.getTotalEcts(true);
+      return this.getPlannedCredits();
     },
     totalEarnedEcts() {
-      return this.getTotalEcts();
+      return this.getEarnedCredits();
     },
   },
   components: { Semester, Focus, BeautifulProgressIndicator },
   methods: {
+    // TODO: Get this out of here
+    sumCredits: (previousTotal, module) => previousTotal + module.ects,
     loadModules() {
       fetch(`${BASE_URL}${ROUTE_MODULES}`)
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((modules) => {
-                this.modules = modules;
-                this.restorePlanFromUrl();
-                this.loadCategories();
-                this.loadFocuses();
-              });
-          }
+        .then((response) => response.json())
+        .then((modules) => {
+          this.modules = modules;
+          this.restorePlanFromUrl();
+          this.loadCategories();
+          this.loadFocuses();
         });
     },
     loadCategories() {
       fetch(`${BASE_URL}${ROUTE_CATEGORIES}`)
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((categories) => {
-                this.categories = categories;
-              });
-          }
+        .then((response) => response.json())
+        .then((categories) => {
+          this.categories = categories;
         });
     },
     loadFocuses() {
@@ -181,19 +185,22 @@ export default {
               .split('_')
               .map((moduleId) => {
                 const newModule = this.modules.find((module) => module.id === moduleId);
+
                 // eslint-disable-next-line no-console
                 if (newModule == null) console.warn(`Module with id: ${moduleId} could not be restored`);
+
                 return newModule;
               })
-              .filter((module) => module != null),
+              .filter((module) => module),
           }));
       }
     },
     updateUrlFragment() {
-      window.location.hash = `plan/${this.semesters
-        .map((semester) => semester.modules.map((module) => module.id)
-          .join('_'))
-        .join('-')}`;
+      const encodedPlan = this.semesters
+        .map((semester) => semester.modules.map((module) => module.id).join('_'))
+        .join('-');
+
+      window.location.hash = `plan/${encodedPlan}`;
     },
     getPlannedSemesterForModule(moduleName) {
       return this.semesters.find(
@@ -204,21 +211,15 @@ export default {
       return this.semesters
         .filter((semester) => semester.number <= this.lastSemesterNumber)
         .flatMap((semester) => semester.modules)
-        .filter((module) => module.categories.includes(category.name))
-        .reduce((previousTotal, module) => previousTotal + module.ects, 0);
+        .filter((module) => category === undefined || category.modules.includes(module.id))
+        .reduce(this.sumCredits, 0);
     },
     getPlannedCredits(category) {
       return this.semesters
         .filter((semester) => semester.number > this.lastSemesterNumber)
         .flatMap((semester) => semester.modules)
-        .filter((module) => module.categories.includes(category.name))
-        .reduce((previousTotal, module) => previousTotal + module.ects, 0);
-    },
-    getTotalEcts(includePlanned = false) {
-      return this.semesters
-        .filter((semester) => semester.number <= this.lastSemesterNumber || includePlanned)
-        .flatMap((semester) => semester.modules)
-        .reduce((previousTotal, module) => previousTotal + module.ects, 0);
+        .filter((module) => category === undefined || category.modules.includes(module.id))
+        .reduce(this.sumCredits, 0);
     },
     addModule(semesterNumber, moduleName) {
       const module = this.modules.find((item) => item.name === moduleName);
