@@ -37,16 +37,6 @@
 </template>
 
 <script>
-const CATEGORY_CLASS_MAP = {
-  'Aufbau (I_Auf)': 'category-1',
-  'Engineering Practice (I_EP)': 'category-2',
-  'Gesellschaft, Wirtschaft und Recht (I-gwr)': 'category-3',
-  'Informatik (I_Inf)': 'category-4',
-  'Kommunikation und Englisch (I_KomEng)': 'category-5',
-  'Mathematik und Physik (Kat_MaPh)': 'category-6',
-  'Rahmenausbildung (Kat_RA)': 'category-7',
-  'Studien- Bachelorarbeit (I_SaBa)': 'category-8',
-};
 export default {
   name: 'Semester',
   props: {
@@ -97,16 +87,6 @@ export default {
       const index = this.modules.indexOf(moduleToDelete[0]);
       this.$parent.removeModule(this.number, index);
     },
-    selectModuleClass() {
-      this.modules.forEach((module) => {
-        const category = module.categories[0] ?? '';
-        // eslint-disable-next-line no-param-reassign
-        module.moduleClass = category ? CATEGORY_CLASS_MAP[category] : '';
-      });
-    },
-  },
-  mounted() {
-    this.selectModuleClass();
   },
 };
 </script>

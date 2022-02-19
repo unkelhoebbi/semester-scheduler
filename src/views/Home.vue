@@ -99,6 +99,18 @@ const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/2.0/
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
 const ROUTE_FOCUSES = '/focuses.json';
+
+const categoryColors = [
+  '#e17055',
+  '#e84393',
+  '#ff7675',
+  '#00cec9',
+  '#00b894',
+  '#a29bfe',
+  '#55efc4',
+  '#fdcb6e',
+];
+
 export default {
   name: 'Home',
   data() {
@@ -117,7 +129,6 @@ export default {
       return this.categories.map((category) => ({
         earnedCredits: this.getEarnedCredits(category),
         plannedCredits: this.getPlannedCredits(category),
-        color: `#${((1 << 24) * Math.random() | 0).toString(16)}`, // TODO
         ...category,
       }));
     },
@@ -143,7 +154,6 @@ export default {
   },
   components: { Semester, Focus, BeautifulProgressIndicator },
   methods: {
-    // TODO: Get this out of here
     sumCredits: (previousTotal, module) => previousTotal + module.ects,
     loadModules() {
       fetch(`${BASE_URL}${ROUTE_MODULES}`)
@@ -159,7 +169,10 @@ export default {
       fetch(`${BASE_URL}${ROUTE_CATEGORIES}`)
         .then((response) => response.json())
         .then((categories) => {
-          this.categories = categories;
+          this.categories = categories.map((category, index) => ({
+            color: categoryColors[index],
+            ...category,
+          }));
         });
     },
     loadFocuses() {
@@ -207,14 +220,14 @@ export default {
         (semester) => semester.modules.some(module => module.name === moduleName),
       )?.number;
     },
-    getEarnedCredits(category) {
+    getEarnedCredits(category = undefined) {
       return this.semesters
         .filter((semester) => semester.number <= this.lastSemesterNumber)
         .flatMap((semester) => semester.modules)
         .filter((module) => category === undefined || category.modules.includes(module.id))
         .reduce(this.sumCredits, 0);
     },
-    getPlannedCredits(category) {
+    getPlannedCredits(category = undefined) {
       return this.semesters
         .filter((semester) => semester.number > this.lastSemesterNumber)
         .flatMap((semester) => semester.modules)
@@ -258,46 +271,6 @@ export default {
   border-radius: 5px;
   padding: 21px;
   background: #ececec;
-}
-
-.category-1 {
-  border-bottom: 2px solid #e17055;
-  border-left: 2px solid #e17055;
-}
-
-.category-2 {
-  border-bottom: 2px solid #e84393;
-  border-left: 2px solid #e84393;
-}
-
-.category-3 {
-  border-bottom: 2px solid #ff7675;
-  border-left: 2px solid #ff7675;
-}
-
-.category-4 {
-  border-bottom: 2px solid #00cec9;
-  border-left: 2px solid #00cec9;
-}
-
-.category-5 {
-  border-bottom: 2px solid #00b894;
-  border-left: 2px solid #00b894;
-}
-
-.category-6 {
-  border-bottom: 2px solid #a29bfe;
-  border-left: 2px solid #a29bfe;
-}
-
-.category-7 {
-  border-bottom: 2px solid #55efc4;
-  border-left: 2px solid #55efc4;
-}
-
-.category-8 {
-  border-bottom: 2px solid #fdcb6e;
-  border-left: 2px solid #fdcb6e;
 }
 
 .notification {
