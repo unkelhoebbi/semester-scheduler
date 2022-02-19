@@ -1,17 +1,12 @@
 <template>
 <div class="columns is-flex is-flex-direction-column has-text-centered">
   <h2>Semester {{ number }}</h2>
-  <div
-    class="column module mt-1"
-    v-bind:class="module.moduleClass"
+  <Module
     v-for="module in modules"
-    :key="module.name">
-    <button class="is-pulled-right" v-on:click="removeModule(module.name)">
-      <i class="remove-module fab fa fa-times"></i>
-    </button>
-    <h3>{{module.name}}</h3>
-    <p>{{module.ects}} ECTS</p>
-  </div>
+    :key="module"
+    :module="module"
+    :semesterNumber="number"
+  ></Module>
   <div class="column" v-bind:class="{'is-hidden': isAddingNewModule}">
     <button class="p-2 button-add" v-on:click="isAddingNewModule=true">Add</button>
   </div>
@@ -37,16 +32,8 @@
 </template>
 
 <script>
-const CATEGORY_CLASS_MAP = {
-  'Aufbau (I_Auf)': 'category-1',
-  'Engineering Practice (I_EP)': 'category-2',
-  'Gesellschaft, Wirtschaft und Recht (I-gwr)': 'category-3',
-  'Informatik (I_Inf)': 'category-4',
-  'Kommunikation und Englisch (I_KomEng)': 'category-5',
-  'Mathematik und Physik (Kat_MaPh)': 'category-6',
-  'Rahmenausbildung (Kat_RA)': 'category-7',
-  'Studien- Bachelorarbeit (I_SaBa)': 'category-8',
-};
+import Module from './Module.vue';
+
 export default {
   name: 'Semester',
   props: {
@@ -60,6 +47,7 @@ export default {
       type: Array,
     },
   },
+  components: { Module },
   computed: {
     getTotalEcts() {
       return this.countTotalEcts();
@@ -92,31 +80,11 @@ export default {
       this.additionalModule = null;
       this.isAddingNewModule = false;
     },
-    removeModule(moduleName) {
-      const moduleToDelete = this.modules.filter((item) => item.name === moduleName);
-      const index = this.modules.indexOf(moduleToDelete[0]);
-      this.$parent.removeModule(this.number, index);
-    },
-    selectModuleClass() {
-      this.modules.forEach((module) => {
-        const category = module.categories[0] ?? '';
-        // eslint-disable-next-line no-param-reassign
-        module.moduleClass = category ? CATEGORY_CLASS_MAP[category] : '';
-      });
-    },
-  },
-  mounted() {
-    this.selectModuleClass();
   },
 };
 </script>
 
 <style scoped>
-.module {
-  background-color: black;
-  color: white;
-  border-radius: 5px;
-}
 button {
   background: #d63031;
   border: none;
@@ -126,40 +94,5 @@ button {
 }
 .button-add {
   background-color: black;
-}
-.remove-module:hover {
-  color: red;
-}
-.category-1 {
-  background-color: #e17055;
-  color: white;
-}
-.category-2 {
-  background-color: #e84393;
-  color: white;
-}
-.category-3 {
-  background-color: #ff7675;
-  color: white;
-}
-.category-4 {
-  background-color: #00cec9;
-  color: white;
-}
-.category-5 {
-  background-color: #00b894;
-  color: white;
-}
-.category-6 {
-  background-color: #a29bfe;
-  color: white;
-}
-.category-7 {
-  background-color: #55efc4;
-  color: white;
-}
-.category-7 {
-  background-color: #fdcb6e;
-  color: white;
 }
 </style>

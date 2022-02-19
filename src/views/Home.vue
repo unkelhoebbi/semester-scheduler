@@ -56,8 +56,18 @@
             </td>
           </tr>
           <tr>
-            <td class="p-2">Total: TODO</td>
-            </tr>
+            <td style="vertical-align:bottom;padding-right:1em;text-align:end">
+              Total
+            </td>
+            <td style="padding-top:8px">
+              <BeautifulProgressIndicator
+              :required="180"
+              :earned="totalEarnedEcts"
+              :planned="totalPlannedEcts"
+              :color="`orange`"
+              ></BeautifulProgressIndicator>
+            </td>
+          </tr>
           </tbody>
         </table>
       </article>
@@ -85,10 +95,22 @@ import Semester from '../components/Semester.vue';
 import Focus from '../components/Focus.vue';
 import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
 
-const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/1.0/data';
+const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/2.0/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
 const ROUTE_FOCUSES = '/focuses.json';
+
+const categoryColors = [
+  '#e17055',
+  '#e84393',
+  '#ff7675',
+  '#00cec9',
+  '#00b894',
+  '#a29bfe',
+  '#55efc4',
+  '#fdcb6e',
+];
+
 export default {
   name: 'Home',
   data() {
@@ -107,7 +129,6 @@ export default {
       return this.categories.map((category) => ({
         earnedCredits: this.getEarnedCredits(category),
         plannedCredits: this.getPlannedCredits(category),
-        color: `#${((1 << 24) * Math.random() | 0).toString(16)}`, // TODO
         ...category,
       }));
     },
@@ -116,46 +137,45 @@ export default {
         .flatMap((semester) => semester.modules);
     },
     mappedFocuses() {
-      const plannedModuleNames = this.plannedModules.map(module => module.name);
+      const plannedModuleNames = this.plannedModules.map(module => module.id);
       return this.focuses.map((focus) => ({
         ...focus,
         filteredModules: focus.modules.filter(
-          (moduleName) => !plannedModuleNames.includes(moduleName),
+          (moduleId) => !plannedModuleNames.includes(moduleId),
         ),
       }));
     },
     totalPlannedEcts() {
-      return this.getTotalEcts(true);
+      return this.getPlannedCredits();
     },
     totalEarnedEcts() {
-      return this.getTotalEcts();
+      return this.getEarnedCredits();
     },
   },
   components: { Semester, Focus, BeautifulProgressIndicator },
   methods: {
+    sumCredits: (previousTotal, module) => previousTotal + module.ects,
+    getColorForCategory(categoryId) {
+      return this.categories.find((category) => category.id === categoryId)?.color;
+    },
     loadModules() {
       fetch(`${BASE_URL}${ROUTE_MODULES}`)
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((modules) => {
-                this.modules = modules;
-                this.restorePlanFromUrl();
-                this.loadCategories();
-                this.loadFocuses();
-              });
-          }
+        .then((response) => response.json())
+        .then((modules) => {
+          this.modules = modules;
+          this.restorePlanFromUrl();
+          this.loadCategories();
+          this.loadFocuses();
         });
     },
     loadCategories() {
       fetch(`${BASE_URL}${ROUTE_CATEGORIES}`)
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((categories) => {
-                this.categories = categories;
-              });
-          }
+        .then((response) => response.json())
+        .then((categories) => {
+          this.categories = categories.map((category, index) => ({
+            color: categoryColors[index],
+            ...category,
+          }));
         });
     },
     loadFocuses() {
@@ -181,52 +201,51 @@ export default {
               .split('_')
               .map((moduleId) => {
                 const newModule = this.modules.find((module) => module.id === moduleId);
+
                 // eslint-disable-next-line no-console
                 if (newModule == null) console.warn(`Module with id: ${moduleId} could not be restored`);
+
                 return newModule;
               })
-              .filter((module) => module != null),
+              .filter((module) => module),
           }));
       }
     },
     updateUrlFragment() {
-      window.location.hash = `plan/${this.semesters
-        .map((semester) => semester.modules.map((module) => module.id)
-          .join('_'))
-        .join('-')}`;
+      const encodedPlan = this.semesters
+        .map((semester) => semester.modules.map((module) => module.id).join('_'))
+        .join('-');
+
+      window.location.hash = `plan/${encodedPlan}`;
     },
     getPlannedSemesterForModule(moduleName) {
       return this.semesters.find(
         (semester) => semester.modules.some(module => module.name === moduleName),
       )?.number;
     },
-    getEarnedCredits(category) {
+    getEarnedCredits(category = undefined) {
       return this.semesters
         .filter((semester) => semester.number <= this.lastSemesterNumber)
         .flatMap((semester) => semester.modules)
-        .filter((module) => module.categories.includes(category.name))
-        .reduce((previousTotal, module) => previousTotal + module.ects, 0);
+        .filter((module) => category === undefined || category.modules.includes(module.id))
+        .reduce(this.sumCredits, 0);
     },
-    getPlannedCredits(category) {
+    getPlannedCredits(category = undefined) {
       return this.semesters
         .filter((semester) => semester.number > this.lastSemesterNumber)
         .flatMap((semester) => semester.modules)
-        .filter((module) => module.categories.includes(category.name))
-        .reduce((previousTotal, module) => previousTotal + module.ects, 0);
-    },
-    getTotalEcts(includePlanned = false) {
-      return this.semesters
-        .filter((semester) => semester.number <= this.lastSemesterNumber || includePlanned)
-        .flatMap((semester) => semester.modules)
-        .reduce((previousTotal, module) => previousTotal + module.ects, 0);
+        .filter((module) => category === undefined || category.modules.includes(module.id))
+        .reduce(this.sumCredits, 0);
     },
     addModule(semesterNumber, moduleName) {
       const module = this.modules.find((item) => item.name === moduleName);
       this.semesters[semesterNumber - 1].modules.push(module);
       this.updateUrlFragment();
     },
-    removeModule(semesterNumber, modulesIndex) {
-      this.semesters[semesterNumber - 1].modules.splice(modulesIndex, 1);
+    removeModule(semesterNumber, moduleId) {
+      this.semesters[semesterNumber - 1].modules = this.semesters[semesterNumber - 1].modules
+        .filter((module) => module.id !== moduleId);
+
       this.updateUrlFragment();
     },
     addSemester() {
@@ -257,46 +276,6 @@ export default {
   border-radius: 5px;
   padding: 21px;
   background: #ececec;
-}
-
-.category-1 {
-  border-bottom: 2px solid #e17055;
-  border-left: 2px solid #e17055;
-}
-
-.category-2 {
-  border-bottom: 2px solid #e84393;
-  border-left: 2px solid #e84393;
-}
-
-.category-3 {
-  border-bottom: 2px solid #ff7675;
-  border-left: 2px solid #ff7675;
-}
-
-.category-4 {
-  border-bottom: 2px solid #00cec9;
-  border-left: 2px solid #00cec9;
-}
-
-.category-5 {
-  border-bottom: 2px solid #00b894;
-  border-left: 2px solid #00b894;
-}
-
-.category-6 {
-  border-bottom: 2px solid #a29bfe;
-  border-left: 2px solid #a29bfe;
-}
-
-.category-7 {
-  border-bottom: 2px solid #55efc4;
-  border-left: 2px solid #55efc4;
-}
-
-.category-8 {
-  border-bottom: 2px solid #fdcb6e;
-  border-left: 2px solid #fdcb6e;
 }
 
 .notification {
