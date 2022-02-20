@@ -75,7 +75,7 @@
     <div class="column">
       <article>
         <h2 class="subtitle">Vertiefungen</h2>
-        <div class="columns is-multiline">
+        <div class="columns is-multiline mt-5">
           <div v-for="focus in mappedFocuses"
             :key="focus.name" class="column is-full">
             <Focus
