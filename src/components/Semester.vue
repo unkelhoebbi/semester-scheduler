@@ -1,4 +1,7 @@
 <template>
+  <button class="delete-button is-pulled-right" v-on:click="removeSemester()">
+  <i class="remove-module fab fa fa-times"></i>
+</button>
 <div class="columns is-flex is-flex-direction-column has-text-centered pt-3">
   <h2 class="subtitle">Semester {{ number }}</h2>
   <Module
@@ -80,6 +83,9 @@ export default {
       this.additionalModule = null;
       this.isAddingNewModule = false;
     },
+    removeSemester() {
+      this.$parent.removeSemester(this.number);
+    },
   },
 };
 </script>
@@ -94,5 +100,11 @@ button {
 }
 .button-add {
   background-color: black;
+}
+.semester .delete-button {
+  visibility: hidden;
+}
+.semester:hover .delete-button {
+  visibility: visible;
 }
 </style>

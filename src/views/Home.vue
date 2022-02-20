@@ -255,6 +255,10 @@ export default {
         modules: [],
       });
     },
+    removeSemester(semesterNumber) {
+      this.semesters = this.semesters.filter((semester) => semester.number !== semesterNumber);
+      this.updateUrlFragment();
+    },
     showErrorMsg(text) {
       if (this.errorTimer !== null) {
         clearTimeout(this.errorTimer);

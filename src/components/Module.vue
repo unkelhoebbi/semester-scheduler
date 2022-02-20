@@ -37,13 +37,6 @@ export default {
     border-radius: 5px;
     color: white;
   }
-  .delete-button {
-    background: #d63031;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    cursor:pointer;
-  }
   .remove-module:hover {
     color: red;
   }
