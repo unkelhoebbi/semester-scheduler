@@ -1,8 +1,19 @@
-@import '~bulma';
+@import "~bulma";
+
 .navbar-item img {
   max-height: 4rem;
 }
 
 .custom-container {
   margin-top: 5rem;
+}
+
+@include desktop {
+  .desktop-ml-6 {
+    margin-left: 3rem;
+  }
+
+  .desktop-mt-6 {
+    margin-top: 3rem;
+  }
 }
