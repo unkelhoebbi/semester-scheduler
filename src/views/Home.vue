@@ -240,6 +240,12 @@ export default {
     },
     addModule(semesterNumber, moduleName) {
       const module = this.modules.find((item) => item.name === moduleName);
+
+      if (module === undefined) {
+        this.showErrorMsg(`Module '${moduleName}' does not exist`);
+        return;
+      }
+
       this.semesters[semesterNumber - 1].modules.push(module);
       this.updateUrlFragment();
     },
