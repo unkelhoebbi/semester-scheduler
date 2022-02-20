@@ -98,7 +98,7 @@ import Semester from '../components/Semester.vue';
 import Focus from '../components/Focus.vue';
 import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
 
-const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/2.0/data';
+const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/2.1/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
 const ROUTE_FOCUSES = '/focuses.json';
