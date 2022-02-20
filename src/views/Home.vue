@@ -21,7 +21,7 @@
       </Transition>
     </div>
   </div>
-  <div class="columns">
+  <div class="columns schedule">
     <div class="column semester" v-for="semester in semesters" :key="semester.name">
       <Semester
         :number="semester.number"
@@ -33,10 +33,10 @@
       <button class="p-2 add-semester-btn has-text-weight-bold" v-on:click="addSemester">+</button>
     </div>
   </div>
-  <div class="columns">
+  <div class="columns mt-6 ml-6">
     <div class="column">
       <article>
-        <h2 class="subtitle">Overview ECTS</h2>
+        <h2 class="subtitle">Übersicht der ECTS Punkte</h2>
         <table>
           <tbody>
           <tr
@@ -74,7 +74,7 @@
     </div>
     <div class="column">
       <article>
-        <h2 class="subtitle">Course focus</h2>
+        <h2 class="subtitle">Vertiefungen</h2>
         <div class="columns is-multiline">
           <div v-for="focus in mappedFocuses"
             :key="focus.name" class="column is-full">
@@ -86,6 +86,9 @@
           </div>
         </div>
       </article>
+    </div>
+    <div class="column">
+      <img src="../assets/this_is_fine.jpg">
     </div>
   </div>
 </template>
@@ -100,16 +103,16 @@ const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
 const ROUTE_FOCUSES = '/focuses.json';
 
-const categoryColors = [
-  '#e17055',
-  '#e84393',
-  '#ff7675',
-  '#00cec9',
-  '#00b894',
-  '#a29bfe',
-  '#55efc4',
-  '#fdcb6e',
-];
+const CATEGORY_COLOR_MAP = {
+  Auf: '#f368e0',
+  MaPh: '#ee5253',
+  KomEng: '#0abde3',
+  gwr: '#10ac84',
+  Inf: '#576574',
+  SaBa: '#222f3e',
+  EP: '#55efc4',
+  RA: '#ff9f43',
+};
 
 export default {
   name: 'Home',
@@ -129,6 +132,7 @@ export default {
       return this.categories.map((category) => ({
         earnedCredits: this.getEarnedCredits(category),
         plannedCredits: this.getPlannedCredits(category),
+        color: CATEGORY_COLOR_MAP[category.id],
         ...category,
       }));
     },
@@ -156,7 +160,7 @@ export default {
   methods: {
     sumCredits: (previousTotal, module) => previousTotal + module.ects,
     getColorForCategory(categoryId) {
-      return this.categories.find((category) => category.id === categoryId)?.color;
+      return CATEGORY_COLOR_MAP[categoryId];
     },
     loadModules() {
       fetch(`${BASE_URL}${ROUTE_MODULES}`)
@@ -172,10 +176,7 @@ export default {
       fetch(`${BASE_URL}${ROUTE_CATEGORIES}`)
         .then((response) => response.json())
         .then((categories) => {
-          this.categories = categories.map((category, index) => ({
-            color: categoryColors[index],
-            ...category,
-          }));
+          this.categories = categories;
         });
     },
     loadFocuses() {
@@ -271,6 +272,9 @@ export default {
 };
 </script>
 <style scoped>
+.schedule {
+  overflow: auto;
+}
 .semester {
   margin: 1.5rem 0.5rem 0 0.5rem;
   border-radius: 5px;

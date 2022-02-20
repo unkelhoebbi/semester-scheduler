@@ -1,7 +1,7 @@
 <template>
 <div class="container">
   <p class="ratio-label">{{earned}} / {{required}}</p>
-  <p class="planned-label" v-if="planned > 0">{{planned}} geplant</p>
+  <p class="planned-label" v-if="planned > 0">{{planned}} noch geplant</p>
 
   <div class="progress-container">
     <div class="planned-progress" v-bind:style="{ 'width': plannedProgress }"></div>

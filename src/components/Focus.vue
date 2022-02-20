@@ -5,16 +5,16 @@
       class="button is-fullwidth button-focus"
       :aria-expanded="isOpen"
       :aria-controls="`collapse${_uid}`"
-      :class="{'is-success is-outlined': !filteredModules.length}"
+      :class="{'is-success': !filteredModules.length}"
     >
 
       <span>{{ name }}</span>
       <div class="left-block">
         <span v-if="filteredModules.length" class="tag is-info is-light">
-          You still need {{filteredModules.length}} modules
+          {{filteredModules.length}} Module werden noch benötigt
         </span>
         <span v-if="!filteredModules.length" class="tag is-success is-light">
-          Congrats, You will earn it!
+          Vertiefung geplant
         </span>
         <span class="icon">
           <font-awesome-icon :icon="isOpen ? openIconClass : closedIconClass" />
@@ -24,7 +24,7 @@
     <div v-show="isOpen" :id="`collapse${_uid}`" class="column is-full column-focus">
       <div class="box box-focus">
             <p v-if="!filteredModules.length">
-              Congratulation! You meet all requirements to get this focus!
+              Alle benötigten Module sind bestanden/geplant.
             </p>
             <p v-if="filteredModules.length">
               Some modules are missing. You still need following to gain the focus:

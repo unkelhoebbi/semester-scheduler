@@ -5,10 +5,10 @@
   v-bind:style="{
     'background-color': this.$parent.$parent.getColorForCategory(module.categories[0])
   }">
-  <button class="is-pulled-right" v-on:click="removeModule(module.id)">
+  <button class="delete-button is-pulled-right" v-on:click="removeModule(module.id)">
     <i class="remove-module fab fa fa-times"></i>
   </button>
-  <h3>{{module.name}}</h3>
+  <h3 class="has-text-weight-bold">{{module.name}}</h3>
   <p>{{module.ects}} ECTS</p>
 </div>
 </template>
@@ -34,10 +34,10 @@ export default {
 
 <style scoped>
   .module {
-    background-color: black;
     border-radius: 5px;
+    color: white;
   }
-  button {
+  .delete-button {
     background: #d63031;
     border: none;
     border-radius: 5px;
@@ -46,5 +46,11 @@ export default {
   }
   .remove-module:hover {
     color: red;
+  }
+  .module .delete-button {
+    visibility: hidden;
+  }
+  .module:hover .delete-button {
+    visibility: visible;
   }
 </style>

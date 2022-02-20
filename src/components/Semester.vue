@@ -1,6 +1,6 @@
 <template>
-<div class="columns is-flex is-flex-direction-column has-text-centered">
-  <h2>Semester {{ number }}</h2>
+<div class="columns is-flex is-flex-direction-column has-text-centered pt-3">
+  <h2 class="subtitle">Semester {{ number }}</h2>
   <Module
     v-for="module in modules"
     :key="module"
