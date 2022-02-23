@@ -4,7 +4,6 @@
       @click="toggleFocus()"
       class="button is-fullwidth button-focus"
       :aria-expanded="isOpen"
-      :aria-controls="`collapse${_uid}`"
       :class="{'is-success': !filteredModules.length}"
     >
 
@@ -21,7 +20,7 @@
         </span>
       </div>
     </button>
-    <div v-show="isOpen" :id="`collapse${_uid}`" class="column is-full column-focus">
+    <div v-show="isOpen" class="column is-full column-focus">
       <div class="box box-focus">
             <p v-if="!filteredModules.length">
               Alle benötigten Module sind bestanden/geplant.

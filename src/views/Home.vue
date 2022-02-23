@@ -48,9 +48,9 @@
             </td>
             <td style="padding-top:8px">
               <BeautifulProgressIndicator
-              :required="category.required_ects"
-              :earned="category.earnedCredits"
-              :planned="category.plannedCredits"
+              :required=category.required_ects
+              :earned=category.earnedCredits
+              :planned=category.plannedCredits
               :color="category.color"
               ></BeautifulProgressIndicator>
             </td>
@@ -61,7 +61,7 @@
             </td>
             <td style="padding-top:8px">
               <BeautifulProgressIndicator
-              :required="180"
+              :required=180
               :earned="totalEarnedEcts"
               :planned="totalPlannedEcts"
               :color="`orange`"
@@ -176,7 +176,9 @@ export default {
       fetch(`${BASE_URL}${ROUTE_CATEGORIES}`)
         .then((response) => response.json())
         .then((categories) => {
-          this.categories = categories;
+          // make sure required_ects is a number
+          this.categories = categories
+            .map((c) => ({ ...c, required_ects: Number(c.required_ects) }));
         });
     },
     loadFocuses() {
