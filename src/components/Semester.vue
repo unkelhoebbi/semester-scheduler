@@ -3,7 +3,6 @@
   <h2 class="subtitle">Semester {{ number }}</h2>
   <Container
     @drop="onDrop"
-    @drag-end="onDragEnd"
     @should-accept-drop="(source, payload) => true"
     group-name="semester"
     :get-child-payload="getChildPayload">
@@ -91,24 +90,21 @@ export default {
       this.additionalModule = null;
       this.isAddingNewModule = false;
     },
-    onDrop({ addedIndex, payload }) {
+    onDrop({ addedIndex, removedIndex, payload }) {
       // this is fine, as vue observes splice on array props and data binds correctly.
       // We don't need to remove the old value first, that's handled in onDragEnd
       if (addedIndex !== null) {
         // eslint-disable-next-line vue/no-mutating-props
         this.modules.splice(addedIndex, 0, payload);
       }
+      if (removedIndex !== null) {
+        // eslint-disable-next-line vue/no-mutating-props
+        this.modules.splice(removedIndex, 1);
+      }
       this.$parent.updateUrlFragment();
     },
     getChildPayload(index) {
       return this.modules[index];
-    },
-    onDragEnd({ isSource, payload }) {
-      if (isSource) {
-        const moveObjectIndex = this.modules.findIndex((value) => value.id === payload.id);
-        // eslint-disable-next-line vue/no-mutating-props
-        this.modules.splice(moveObjectIndex, 1);
-      }
     },
   },
 };
