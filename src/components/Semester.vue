@@ -87,16 +87,12 @@ export default {
       this.isAddingNewModule = false;
     },
     onDrop(dropResult) {
-      const {
-        // eslint-disable-next-line no-unused-vars
-        addedIndex, removedIndex, payload, element,
-      } = dropResult;
-      const moveObject = this.modules.find((v, i) => i === removedIndex);
+      const moveObject = this.modules.find((v, i) => i === dropResult.removedIndex);
       // this is fine, as vue observes splice on array props and data binds correctly.
       // eslint-disable-next-line vue/no-mutating-props
-      this.modules.splice(removedIndex, 1);
+      this.modules.splice(dropResult.removedIndex, 1);
       // eslint-disable-next-line vue/no-mutating-props
-      this.modules.splice(addedIndex, 0, moveObject);
+      this.modules.splice(dropResult.addedIndex, 0, moveObject);
       this.$parent.updateUrlFragment();
     },
   },
