@@ -1,7 +1,12 @@
 <template>
 <div class="columns is-flex is-flex-direction-column has-text-centered pt-3">
   <h2 class="subtitle">Semester {{ number }}</h2>
-  <Container @drop="onDrop">
+  <Container
+    @drop="onDrop"
+    @drag-end="onDragEnd"
+    @should-accept-drop="(source, payload) => true"
+    group-name="semester"
+    :get-child-payload="getChildPayload">
     <Module
       v-for="module in modules"
       :key="module"
@@ -86,14 +91,24 @@ export default {
       this.additionalModule = null;
       this.isAddingNewModule = false;
     },
-    onDrop(dropResult) {
-      const moveObject = this.modules.find((v, i) => i === dropResult.removedIndex);
+    onDrop({ addedIndex, payload }) {
       // this is fine, as vue observes splice on array props and data binds correctly.
-      // eslint-disable-next-line vue/no-mutating-props
-      this.modules.splice(dropResult.removedIndex, 1);
-      // eslint-disable-next-line vue/no-mutating-props
-      this.modules.splice(dropResult.addedIndex, 0, moveObject);
+      // We don't need to remove the old value first, that's handled in onDragEnd
+      if (addedIndex !== null) {
+        // eslint-disable-next-line vue/no-mutating-props
+        this.modules.splice(addedIndex, 0, payload);
+      }
       this.$parent.updateUrlFragment();
+    },
+    getChildPayload(index) {
+      return this.modules[index];
+    },
+    onDragEnd({ isSource, payload }) {
+      if (isSource) {
+        const moveObjectIndex = this.modules.findIndex((value) => value.id === payload.id);
+        // eslint-disable-next-line vue/no-mutating-props
+        this.modules.splice(moveObjectIndex, 1);
+      }
     },
   },
 };

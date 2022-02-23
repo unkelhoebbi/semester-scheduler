@@ -1,5 +1,5 @@
 <template>
-  <Draggable ondr>
+  <Draggable>
     <div
       class="column module mt-1"
       :key="module.name"
@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     removeModule(moduleId) {
-      this.$parent.$parent.removeModule(this.semesterNumber, moduleId);
+      this.$parent.$parent.$parent.removeModule(this.semesterNumber, moduleId);
     },
   },
 };
