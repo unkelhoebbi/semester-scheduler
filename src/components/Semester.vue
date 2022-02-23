@@ -1,12 +1,14 @@
 <template>
 <div class="columns is-flex is-flex-direction-column has-text-centered pt-3">
   <h2 class="subtitle">Semester {{ number }}</h2>
-  <Module
-    v-for="module in modules"
-    :key="module"
-    :module="module"
-    :semesterNumber="number"
-  ></Module>
+  <Container @drop="onDrop">
+    <Module
+      v-for="module in modules"
+      :key="module"
+      :module="module"
+      :semesterNumber="number">
+    </Module>
+  </Container>
   <div class="column" v-bind:class="{'is-hidden': isAddingNewModule}">
     <button class="p-2 button-add" v-on:click="isAddingNewModule=true">Add</button>
   </div>
@@ -32,6 +34,7 @@
 </template>
 
 <script>
+import { Container } from 'vue-dndrop';
 import Module from './Module.vue';
 
 export default {
@@ -47,7 +50,10 @@ export default {
       type: Array,
     },
   },
-  components: { Module },
+  components: {
+    Module,
+    Container,
+  },
   computed: {
     getTotalEcts() {
       return this.countTotalEcts();
@@ -79,6 +85,19 @@ export default {
       this.$parent.addModule(this.number, this.additionalModule);
       this.additionalModule = null;
       this.isAddingNewModule = false;
+    },
+    onDrop(dropResult) {
+      const {
+        // eslint-disable-next-line no-unused-vars
+        addedIndex, removedIndex, payload, element,
+      } = dropResult;
+      const moveObject = this.modules.find((v, i) => i === removedIndex);
+      // this is fine, as vue observes splice on array props and data binds correctly.
+      // eslint-disable-next-line vue/no-mutating-props
+      this.modules.splice(removedIndex, 1);
+      // eslint-disable-next-line vue/no-mutating-props
+      this.modules.splice(addedIndex, 0, moveObject);
+      this.$parent.updateUrlFragment();
     },
   },
 };
