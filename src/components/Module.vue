@@ -43,6 +43,7 @@ export default {
   .module {
     border-radius: 5px;
     color: white;
+    cursor: move;
   }
   .delete-button {
     background: #d63031;
