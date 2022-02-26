@@ -91,15 +91,17 @@ export default {
       this.isAddingNewModule = false;
     },
     onDrop({ addedIndex, removedIndex, payload }) {
-      // this is fine, as vue observes splice on array props and data binds correctly.
-      // We don't need to remove the old value first, that's handled in onDragEnd
-      if (addedIndex !== null) {
-        // eslint-disable-next-line vue/no-mutating-props
-        this.modules.splice(addedIndex, 0, payload);
-      }
-      if (removedIndex !== null) {
+      const hasRemoval = removedIndex !== null;
+      const hasAdd = addedIndex !== null;
+
+      if (hasRemoval) {
         // eslint-disable-next-line vue/no-mutating-props
         this.modules.splice(removedIndex, 1);
+      }
+
+      if (hasAdd) {
+        // eslint-disable-next-line vue/no-mutating-props
+        this.modules.splice(addedIndex, 0, payload);
       }
       this.$parent.updateUrlFragment();
     },
