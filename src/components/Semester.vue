@@ -13,6 +13,7 @@
     :get-child-payload="getChildPayload">
     <Module
       v-for="module in modules"
+      @on-delete="$emit('on-module-deleted', $event)"
       :key="module"
       :module="module"
       :semesterNumber="number">
@@ -27,10 +28,10 @@
     <label for="additionalModule">Select additional module</label>
     <input
       id="additionalModule"
+      ref="addModuleInput"
       type="text"
-      v-model="additionalModule"
       list="allModules"
-      @change="addModule">
+      @change="addModule($event.target.value)">
     <datalist id="allModules">
       <option v-for="selectableModule in allModules"
               :key="selectableModule.name" v-bind:value="selectableModule.name">
@@ -50,6 +51,7 @@ import Module from './Module.vue';
 
 export default {
   name: 'Semester',
+  emits: ['on-module-deleted', 'on-add-module'],
   props: {
     number: {
       type: Number,
@@ -70,35 +72,31 @@ export default {
       return this.countTotalEcts();
     },
   },
+  watch: {
+    modules: {
+      deep: true,
+      immediate: false,
+      handler() {
+        this.isAddingNewModule = false;
+      },
+    },
+    isAddingNewModule(newValue) {
+      if (newValue === false) {
+        this.$refs.addModuleInput.value = null;
+      }
+    },
+  },
   data() {
     return {
-      additionalModule: null,
       isAddingNewModule: false,
     };
   },
   methods: {
+    addModule(moduleName) {
+      this.$emit('on-add-module', moduleName, this.number);
+    },
     countTotalEcts() {
       return this.modules.reduce((previousValue, module) => previousValue + module.ects, 0);
-    },
-    addModule() {
-      const blockingSemesterNumber = this.$parent.getPlannedSemesterForModule(
-        this.additionalModule,
-      );
-      if (blockingSemesterNumber) {
-        const text = `Module ${this.additionalModule} is already in semester ${blockingSemesterNumber}`;
-        // eslint-disable-next-line no-console
-        console.warn(text);
-        this.$parent.showErrorMsg(text);
-        this.additionalModule = null;
-        this.isAddingNewModule = false;
-        return;
-      }
-      this.$parent.addModule(this.number, this.additionalModule);
-      this.additionalModule = null;
-      this.isAddingNewModule = false;
-    },
-    removeSemester() {
-      this.$parent.removeSemester(this.number);
     },
     onDrop({ addedIndex, removedIndex, payload }) {
       const hasRemoval = removedIndex !== null;
@@ -113,7 +111,6 @@ export default {
         // eslint-disable-next-line vue/no-mutating-props
         this.modules.splice(addedIndex, 0, payload);
       }
-      this.$parent.updateUrlFragment();
     },
     getChildPayload(index) {
       return this.modules[index];
