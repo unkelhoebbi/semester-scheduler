@@ -103,7 +103,6 @@ export default {
         // eslint-disable-next-line vue/no-mutating-props
         this.modules.splice(addedIndex, 0, payload);
       }
-      this.$parent.updateUrlFragment();
     },
     getChildPayload(index) {
       return this.modules[index];

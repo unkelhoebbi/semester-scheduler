@@ -127,6 +127,15 @@ export default {
       errorTimer: null,
     };
   },
+  watch: {
+    semesters: {
+      isLoaded: true,
+      deep: true,
+      handler() {
+        this.updateUrlFragment();
+      },
+    },
+  },
   computed: {
     mappedCategories() {
       return this.categories.map((category) => ({
@@ -162,57 +171,45 @@ export default {
     getColorForCategory(categoryId) {
       return CATEGORY_COLOR_MAP[categoryId];
     },
-    loadModules() {
-      fetch(`${BASE_URL}${ROUTE_MODULES}`)
-        .then((response) => response.json())
-        .then((modules) => {
-          this.modules = modules;
-          this.restorePlanFromUrl();
-          this.loadCategories();
-          this.loadFocuses();
-        });
+    async getModules() {
+      const response = await fetch(`${BASE_URL}${ROUTE_MODULES}`);
+      return response.json();
     },
-    loadCategories() {
-      fetch(`${BASE_URL}${ROUTE_CATEGORIES}`)
-        .then((response) => response.json())
-        .then((categories) => {
-          // make sure required_ects is a number
-          this.categories = categories
-            .map((c) => ({ ...c, required_ects: Number(c.required_ects) }));
-        });
+    async getCategories() {
+      const response = await fetch(`${BASE_URL}${ROUTE_CATEGORIES}`);
+      return (await response.json()).map((c) => ({ ...c, required_ects: Number(c.required_ects) }));
     },
-    loadFocuses() {
-      fetch(`${BASE_URL}${ROUTE_FOCUSES}`)
-        .then((response) => {
-          if (response.ok) {
-            response.json()
-              .then((focuses) => {
-                this.focuses = focuses;
-              });
-          }
-        });
+    async getFocuses() {
+      const response = await fetch(`${BASE_URL}${ROUTE_FOCUSES}`);
+      return response.ok ? response.json() : [];
     },
-    restorePlanFromUrl() {
+    getPlanDataFromUrl() {
       const path = window.location.hash;
-      if (path.startsWith('#/plan/')) {
-        this.semesters = path
-          .slice(7)
-          .split('-')
-          .map((semester, index) => ({
+      const planIndicator = '#/plan/';
+      const moduleSeparator = '_';
+      const semesterSeparator = '-';
+      function isNullOrWhitespace(input) {
+        return !input || !input.trim();
+      }
+      if (path.startsWith(planIndicator)) {
+        return path
+          .slice(planIndicator.length)
+          .split(semesterSeparator)
+          .map((semesterPart, index) => ({
             number: index + 1,
-            modules: semester
-              .split('_')
+            modules: semesterPart
+              .split(moduleSeparator)
+              .filter((id) => !(isNullOrWhitespace(id)))
               .map((moduleId) => {
                 const newModule = this.modules.find((module) => module.id === moduleId);
-
                 // eslint-disable-next-line no-console
                 if (newModule == null) console.warn(`Module with id: ${moduleId} could not be restored`);
-
                 return newModule;
               })
               .filter((module) => module),
           }));
       }
+      return [];
     },
     updateUrlFragment() {
       const encodedPlan = this.semesters
@@ -249,13 +246,10 @@ export default {
       }
 
       this.semesters[semesterNumber - 1].modules.push(module);
-      this.updateUrlFragment();
     },
     removeModule(semesterNumber, moduleId) {
       this.semesters[semesterNumber - 1].modules = this.semesters[semesterNumber - 1].modules
         .filter((module) => module.id !== moduleId);
-
-      this.updateUrlFragment();
     },
     addSemester() {
       this.semesters.push({
@@ -273,9 +267,11 @@ export default {
       }, 3000);
     },
   },
-  mounted() {
-    this.loadModules();
-    window.addEventListener('hashchange', this.restorePlanFromUrl);
+  async mounted() {
+    this.modules = await this.getModules();
+    this.categories = await this.getCategories();
+    this.focuses = await this.getFocuses();
+    this.semesters = this.getPlanDataFromUrl();
   },
 };
 </script>
