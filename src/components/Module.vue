@@ -6,8 +6,7 @@
       v-bind:style="{
         'background-color': this.$parent.$parent.$parent.getColorForCategory(module.categories[0])
       }">
-      <button class="delete-button is-pulled-right" v-on:click="removeModule(module.id)">
-        <i class="remove-module fab fa fa-times"></i>
+      <button class="delete-button delete is-pulled-right" v-on:click="removeModule(module.id)">
       </button>
       <h3 class="has-text-weight-bold">{{module.name}}</h3>
       <p>{{module.ects}} ECTS</p>
@@ -38,20 +37,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-  .module {
-    border-radius: 5px;
-    color: white;
-    cursor: move;
-  }
-  .remove-module:hover {
-    color: red;
-  }
-  .module .delete-button {
-    visibility: hidden;
-  }
-  .module:hover .delete-button {
-    visibility: visible;
-  }
-</style>

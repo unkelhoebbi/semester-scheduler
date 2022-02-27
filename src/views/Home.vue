@@ -2,18 +2,24 @@
   <div class="columns">
     <div class="column">
       <h1 class="title">Plane deine Module</h1>
-      <label>
-        Letztes erfolgreich abgeschlossenes Semester
-        <select v-model="lastSemesterNumber">
-          <option
-            v-for="semester in semesters"
-            :key="semester.number">
-            {{ semester.number }}
-          </option>
-        </select>
-      </label>
+      <div class="field">
+        <label class="label">
+          Letztes erfolgreich abgeschlossenes Semester
+        </label>
+        <div class="control">
+          <div class="select">
+            <select v-model="lastSemesterNumber">
+              <option
+                v-for="semester in semesters"
+                :key="semester.number">
+                {{ semester.number }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="column is-narrow">
+    <div v-if="errorMsg" class="column is-narrow">
       <Transition>
         <div v-if="errorMsg" class="notification is-danger">
           <span>{{ errorMsg }}</span>
@@ -30,7 +36,9 @@
       ></Semester>
     </div>
     <div class="column add-semester">
-      <button class="p-2 add-semester-btn has-text-weight-bold" v-on:click="addSemester">+</button>
+      <button class="add-semester-btn button is-dark is-fullwidth" v-on:click="addSemester">
+        +
+      </button>
     </div>
   </div>
   <div class="columns desktop-ml-6 desktop-mt-6">
@@ -284,41 +292,5 @@ export default {
 };
 </script>
 <style scoped>
-.schedule {
-  overflow: auto;
-}
-.semester {
-  margin: 1.5rem 0.5rem 0 0.5rem;
-  border-radius: 5px;
-  padding: 21px;
-  background: #ececec;
-}
 
-.notification {
-  z-index: 999;
-  position: absolute;
-  top: 0.5em;
-  right: 0.5em;
-}
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
-}
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-}
-
-.add-semester {
-  max-width: 2.5rem;
-  padding-top: 3.25rem;
-}
-
-.add-semester-btn {
-  background: black;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  cursor: pointer;
-}
 </style>
