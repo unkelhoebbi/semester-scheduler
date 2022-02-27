@@ -34,9 +34,6 @@ export default {
     },
   },
   methods: {
-    removeModule(moduleId) {
-      this.$parent.$parent.$parent.removeModule(this.semesterNumber, moduleId);
-    },
     getColorForCategory,
   },
 };

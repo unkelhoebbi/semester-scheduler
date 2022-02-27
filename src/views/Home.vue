@@ -25,6 +25,7 @@
     <div class="column semester" v-for="semester in semesters" :key="semester.name">
       <Semester
         @on-module-deleted="(moduleId) => onModuleDeleted(semester.number, moduleId)"
+        @on-add-module="addModule"
         :number="semester.number"
         v-model:modules="semester.modules"
         :all-modules="modules"
@@ -225,7 +226,16 @@ export default {
         .filter((module) => category === undefined || category.modules.includes(module.id))
         .reduce(this.sumCredits, 0);
     },
-    addModule(semesterNumber, moduleName) {
+    addModule(moduleName, semesterNumber) {
+      const blockingSemesterNumber = this.getPlannedSemesterForModule(moduleName);
+      if (blockingSemesterNumber) {
+        const text = `Module ${moduleName} is already in semester ${blockingSemesterNumber}`;
+        // eslint-disable-next-line no-console
+        console.warn(text);
+        this.showErrorMsg(text);
+        return;
+      }
+
       const module = this.modules.find((item) => item.name === moduleName);
 
       if (module === undefined) {
