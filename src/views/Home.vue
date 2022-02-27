@@ -24,6 +24,7 @@
   <div class="columns schedule">
     <div class="column semester" v-for="semester in semesters" :key="semester.name">
       <Semester
+        @on-module-deleted="(moduleId) => onModuleDeleted(semester.number, moduleId)"
         :number="semester.number"
         v-model:modules="semester.modules"
         :all-modules="modules"
@@ -252,6 +253,9 @@ export default {
       this.errorTimer = setTimeout(() => {
         this.errorMsg = null;
       }, 3000);
+    },
+    onModuleDeleted(semesterNumber, moduleId) {
+      this.removeModule(semesterNumber, moduleId);
     },
   },
   async mounted() {

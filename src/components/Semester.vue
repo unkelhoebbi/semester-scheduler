@@ -8,6 +8,7 @@
     :get-child-payload="getChildPayload">
     <Module
       v-for="module in modules"
+      @on-delete="$emit('on-module-deleted', $event)"
       :key="module"
       :module="module"
       :semesterNumber="number">
@@ -43,6 +44,7 @@ import Module from './Module.vue';
 
 export default {
   name: 'Semester',
+  emits: ['on-module-deleted'],
   props: {
     number: {
       type: Number,
