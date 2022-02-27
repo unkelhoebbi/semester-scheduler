@@ -4,7 +4,7 @@
       class="column module mt-1"
       :key="module.name"
       v-bind:style="{
-        'background-color': this.$parent.$parent.$parent.getColorForCategory(module.categories[0])
+        'background-color': this.getColorForCategory(module.categories[0])
       }">
       <button class="delete-button is-pulled-right" v-on:click="removeModule(module.id)">
         <i class="remove-module fab fa fa-times"></i>
@@ -17,6 +17,7 @@
 
 <script>
 import { Draggable } from 'vue-dndrop';
+import { getColorForCategory } from '../helpers/color-helper';
 
 export default {
   name: 'Module',
@@ -35,6 +36,7 @@ export default {
     removeModule(moduleId) {
       this.$parent.$parent.$parent.removeModule(this.semesterNumber, moduleId);
     },
+    getColorForCategory,
   },
 };
 </script>
