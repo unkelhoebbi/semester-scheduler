@@ -1,17 +1,16 @@
 <template>
   <footer class="section rab-footer">
     <div class="pt-5 divider"></div>
-    <div class="container">
-      <div class="is-flex-tablet is-justify-content-between is-align-items-center">
-        <p>© 2022 Jeremy Stucki, Gregor Stuber, Joshua Hürzeler</p>
-        <div class="py-2 is-hidden-tablet"></div>
-        <div class="ml-auto">
+      <div class="columns">
+        <div class="column is-11">
+          <p>© 2022 Jeremy Stucki, Gregor Stuber, Joshua Hürzeler, Mathias Fischler</p>
+        </div>
+        <div class="column is-1 ml-auto">
           <a class="mr-4 is-inline-block" href="https://github.com/unkelhoebbi/semester-scheduler">
             <i class="fab fa-github fa-2x social"></i>
           </a>
         </div>
       </div>
-    </div>
   </footer>
 </template>
 

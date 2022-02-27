@@ -2,12 +2,11 @@
   <div class="columns">
     <div class="column">
       <h1 class="title">Plane deine Module</h1>
-      <div class="field">
-        <label class="label">
-          Letztes erfolgreich abgeschlossenes Semester
+      <div class="is-flex is-align-content-space-evenly is-justify-content-left">
+        <label class="is-flex is-flex-direction-column is-justify-content-center">
+          <p>Letztes erfolgreich abgeschlossenes Semester</p>
         </label>
-        <div class="control">
-          <div class="select">
+          <div class="select pl-2">
             <select v-model="lastSemesterNumber">
               <option
                 v-for="semester in semesters"
@@ -18,8 +17,7 @@
           </div>
         </div>
       </div>
-    </div>
-    <div v-if="errorMsg" class="column is-narrow">
+      <div class="column is-narrow">
       <Transition>
         <div v-if="errorMsg" class="notification is-danger">
           <span>{{ errorMsg }}</span>
