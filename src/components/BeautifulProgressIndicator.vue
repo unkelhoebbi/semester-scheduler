@@ -52,7 +52,7 @@ export default {
   }
 
   .planned-progress {
-    background-color: gray;
+    background-color: #A0A0A0;
   }
 
   .earned-progress, .planned-progress {

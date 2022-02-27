@@ -4,12 +4,18 @@
 </button>
 <div class="columns is-flex is-flex-direction-column has-text-centered pt-3">
   <h2 class="subtitle">Semester {{ number }}</h2>
-  <Module
-    v-for="module in modules"
-    :key="module"
-    :module="module"
-    :semesterNumber="number"
-  ></Module>
+  <Container
+    @drop="onDrop"
+    @should-accept-drop="(source, payload) => true"
+    group-name="semester"
+    :get-child-payload="getChildPayload">
+    <Module
+      v-for="module in modules"
+      :key="module"
+      :module="module"
+      :semesterNumber="number">
+    </Module>
+  </Container>
   <div class="column" v-bind:class="{'is-hidden': isAddingNewModule}">
     <button class="p-2 button-add" v-on:click="isAddingNewModule=true">Add</button>
   </div>
@@ -35,6 +41,7 @@
 </template>
 
 <script>
+import { Container } from 'vue-dndrop';
 import Module from './Module.vue';
 
 export default {
@@ -50,7 +57,10 @@ export default {
       type: Array,
     },
   },
-  components: { Module },
+  components: {
+    Module,
+    Container,
+  },
   computed: {
     getTotalEcts() {
       return this.countTotalEcts();
@@ -85,6 +95,24 @@ export default {
     },
     removeSemester() {
       this.$parent.removeSemester(this.number);
+    },
+    onDrop({ addedIndex, removedIndex, payload }) {
+      const hasRemoval = removedIndex !== null;
+      const hasAdd = addedIndex !== null;
+
+      if (hasRemoval) {
+        // eslint-disable-next-line vue/no-mutating-props
+        this.modules.splice(removedIndex, 1);
+      }
+
+      if (hasAdd) {
+        // eslint-disable-next-line vue/no-mutating-props
+        this.modules.splice(addedIndex, 0, payload);
+      }
+      this.$parent.updateUrlFragment();
+    },
+    getChildPayload(index) {
+      return this.modules[index];
     },
   },
 };

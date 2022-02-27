@@ -33,7 +33,7 @@
       <button class="p-2 add-semester-btn has-text-weight-bold" v-on:click="addSemester">+</button>
     </div>
   </div>
-  <div class="columns mt-6 ml-6">
+  <div class="columns desktop-ml-6 desktop-mt-6">
     <div class="column">
       <article>
         <h2 class="subtitle">Übersicht der ECTS Punkte</h2>
@@ -48,9 +48,9 @@
             </td>
             <td style="padding-top:8px">
               <BeautifulProgressIndicator
-              :required="category.required_ects"
-              :earned="category.earnedCredits"
-              :planned="category.plannedCredits"
+              :required=category.required_ects
+              :earned=category.earnedCredits
+              :planned=category.plannedCredits
               :color="category.color"
               ></BeautifulProgressIndicator>
             </td>
@@ -61,7 +61,7 @@
             </td>
             <td style="padding-top:8px">
               <BeautifulProgressIndicator
-              :required="180"
+              :required=180
               :earned="totalEarnedEcts"
               :planned="totalPlannedEcts"
               :color="`orange`"
@@ -98,7 +98,7 @@ import Semester from '../components/Semester.vue';
 import Focus from '../components/Focus.vue';
 import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
 
-const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/2.0/data';
+const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/2.2/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
 const ROUTE_FOCUSES = '/focuses.json';
@@ -176,7 +176,9 @@ export default {
       fetch(`${BASE_URL}${ROUTE_CATEGORIES}`)
         .then((response) => response.json())
         .then((categories) => {
-          this.categories = categories;
+          // make sure required_ects is a number
+          this.categories = categories
+            .map((c) => ({ ...c, required_ects: Number(c.required_ects) }));
         });
     },
     loadFocuses() {
@@ -240,6 +242,12 @@ export default {
     },
     addModule(semesterNumber, moduleName) {
       const module = this.modules.find((item) => item.name === moduleName);
+
+      if (module === undefined) {
+        this.showErrorMsg(`Module '${moduleName}' does not exist`);
+        return;
+      }
+
       this.semesters[semesterNumber - 1].modules.push(module);
       this.updateUrlFragment();
     },
