@@ -35,7 +35,7 @@
       <button class="p-2 add-semester-btn has-text-weight-bold" v-on:click="addSemester">+</button>
     </div>
   </div>
-  <div class="columns mt-6 ml-6">
+  <div class="columns desktop-ml-6 desktop-mt-6">
     <div class="column">
       <article>
         <h2 class="subtitle">Übersicht der ECTS Punkte</h2>
@@ -254,6 +254,10 @@ export default {
         number: this.semesters.length + 1,
         modules: [],
       });
+    },
+    removeSemester(semesterNumber) {
+      this.semesters = this.semesters.filter((semester) => semester.number !== semesterNumber);
+      this.updateUrlFragment();
     },
     showErrorMsg(text) {
       if (this.errorTimer !== null) {
