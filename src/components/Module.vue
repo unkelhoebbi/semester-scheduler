@@ -1,21 +1,30 @@
 <template>
-<div
-  class="column module mt-1"
-  :key="module.name"
-  v-bind:style="{
-    'background-color': this.$parent.$parent.getColorForCategory(module.categories[0])
-  }">
-  <button class="delete-button is-pulled-right" v-on:click="removeModule(module.id)">
-    <i class="remove-module fab fa fa-times"></i>
-  </button>
-  <h3 class="has-text-weight-bold">{{module.name}}</h3>
-  <p>{{module.ects}} ECTS</p>
-</div>
+  <Draggable>
+    <div
+      class="column module mt-1"
+      :key="module.name"
+      v-bind:style="{
+        'background-color': this.getColorForCategory(module.categories[0])
+      }">
+      <button class="delete-button is-pulled-right" @click="$emit('on-delete', module.id)">
+        <i class="remove-module fab fa fa-times"></i>
+      </button>
+      <h3 class="has-text-weight-bold">{{module.name}}</h3>
+      <p>{{module.ects}} ECTS</p>
+    </div>
+  </Draggable>
 </template>
 
 <script>
+import { Draggable } from 'vue-dndrop';
+import { getColorForCategory } from '../helpers/color-helper';
+
 export default {
-  name: 'BeautifulProgressIndicator',
+  name: 'Module',
+  components: {
+    Draggable,
+  },
+  emits: ['on-delete'],
   props: {
     semesterNumber: {
       type: Number,
@@ -25,9 +34,7 @@ export default {
     },
   },
   methods: {
-    removeModule(moduleId) {
-      this.$parent.$parent.removeModule(this.semesterNumber, moduleId);
-    },
+    getColorForCategory,
   },
 };
 </script>
@@ -36,13 +43,7 @@ export default {
   .module {
     border-radius: 5px;
     color: white;
-  }
-  .delete-button {
-    background: #d63031;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    cursor:pointer;
+    cursor: move;
   }
   .remove-module:hover {
     color: red;
