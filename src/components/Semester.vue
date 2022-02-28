@@ -6,7 +6,7 @@
   <h2 class="subtitle">Semester {{ number }}</h2>
   <Container
     @drop="onDrop"
-    @should-accept-drop="(source, payload) => true"
+    @should-accept-drop="() => true"
     group-name="semester"
     :get-child-payload="getChildPayload">
     <Module

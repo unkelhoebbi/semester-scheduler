@@ -1,5 +1,5 @@
 <template>
-  <Draggable>
+  <Draggable :drag-not-allowed="isMobile">
     <div
       class="column module mt-1"
       :key="module.name"
@@ -16,8 +16,9 @@
 </template>
 
 <script>
+import { getColorForCategory } from '@/helpers/color-helper';
+import { isMobile } from '@/helpers/mobile-checker';
 import { Draggable } from 'vue-dndrop';
-import { getColorForCategory } from '../helpers/color-helper';
 
 export default {
   name: 'Module',
@@ -31,6 +32,11 @@ export default {
     },
     module: {
       type: Object,
+    },
+  },
+  computed: {
+    isMobile() {
+      return isMobile();
     },
   },
   methods: {
