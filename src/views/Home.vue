@@ -96,10 +96,13 @@
 </template>
 
 <script>
+import {
+  ModuleSeparator, NavLinkIndicator, PlanIndicator, SemesterSeparator,
+} from '@/helpers/route-constants';
+import { CATEGORY_COLOR_MAP } from '@/helpers/color-helper';
 import Semester from '../components/Semester.vue';
 import Focus from '../components/Focus.vue';
 import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
-import { CATEGORY_COLOR_MAP } from '../helpers/color-helper';
 
 const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/2.2/data';
 const ROUTE_MODULES = '/modules.json';
@@ -125,6 +128,16 @@ export default {
       deep: true,
       handler() {
         this.updateUrlFragment();
+      },
+    },
+    $route: {
+      isLoaded: true,
+      immediate: false,
+      handler(newValue) {
+        if (newValue.fullPath && newValue.fullPath.startsWith(NavLinkIndicator)) {
+          const targetPlan = newValue.fullPath.slice(NavLinkIndicator.length);
+          this.semesters = this.getPlanDataFromUrl(PlanIndicator + targetPlan);
+        }
       },
     },
   },
@@ -172,22 +185,18 @@ export default {
       const response = await fetch(`${BASE_URL}${ROUTE_FOCUSES}`);
       return response.ok ? response.json() : [];
     },
-    getPlanDataFromUrl() {
-      const path = window.location.hash;
-      const planIndicator = '#/plan/';
-      const moduleSeparator = '_';
-      const semesterSeparator = '-';
+    getPlanDataFromUrl(path) {
       function isNullOrWhitespace(input) {
         return !input || !input.trim();
       }
-      if (path.startsWith(planIndicator)) {
+      if (path.startsWith(PlanIndicator)) {
         return path
-          .slice(planIndicator.length)
-          .split(semesterSeparator)
+          .slice(PlanIndicator.length)
+          .split(SemesterSeparator)
           .map((semesterPart, index) => ({
             number: index + 1,
             modules: semesterPart
-              .split(moduleSeparator)
+              .split(ModuleSeparator)
               .filter((id) => !(isNullOrWhitespace(id)))
               .map((moduleId) => {
                 const newModule = this.modules.find((module) => module.id === moduleId);
@@ -276,7 +285,7 @@ export default {
     this.modules = await this.getModules();
     this.categories = await this.getCategories();
     this.focuses = await this.getFocuses();
-    this.semesters = this.getPlanDataFromUrl();
+    this.semesters = this.getPlanDataFromUrl(window.location.hash);
   },
 };
 </script>
