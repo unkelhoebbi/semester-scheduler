@@ -47,7 +47,7 @@ import Module from './Module.vue';
 
 export default {
   name: 'Semester',
-  emits: ['on-module-deleted', 'on-add-module'],
+  emits: ['on-module-deleted', 'on-add-module', 'on-remove-semester'],
   props: {
     number: {
       type: Number,
@@ -90,6 +90,9 @@ export default {
   methods: {
     addModule(moduleName) {
       this.$emit('on-add-module', moduleName, this.number);
+    },
+    removeSemester() {
+      this.$emit('on-remove-semester', this.number);
     },
     countTotalEcts() {
       return this.modules.reduce((previousValue, module) => previousValue + module.ects, 0);
