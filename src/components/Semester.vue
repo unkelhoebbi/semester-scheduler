@@ -1,8 +1,10 @@
 <template>
   <!-- eslint-disable-next-line vue/no-mutating-props -->
-  <draggable v-model="modules"
+  <draggable :list="modules"
              group="semester"
              item-key="id"
+             :animation="200"
+             @end="onDropEnd"
              class="columns is-flex is-flex-direction-column has-text-centered">
     <template #header>
       <div class="semester-header">
@@ -101,19 +103,7 @@ export default {
     countTotalEcts() {
       return this.modules.reduce((previousValue, module) => previousValue + module.ects, 0);
     },
-    onDrop({ addedIndex, removedIndex, payload }) {
-      const hasRemoval = removedIndex !== null;
-      const hasAdd = addedIndex !== null;
-
-      if (hasRemoval) {
-        // eslint-disable-next-line vue/no-mutating-props
-        this.modules.splice(removedIndex, 1);
-      }
-
-      if (hasAdd) {
-        // eslint-disable-next-line vue/no-mutating-props
-        this.modules.splice(addedIndex, 0, payload);
-      }
+    onDropEnd() {
       this.$parent.updateUrlFragment();
     },
     getChildPayload(index) {
