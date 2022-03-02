@@ -119,6 +119,13 @@ export default {
       errorTimer: null,
     };
   },
+  watch: {
+    $route: {
+      handler() {
+        this.restorePlanFromUrl();
+      },
+    },
+  },
   computed: {
     mappedCategories() {
       return this.categories.map((category) => ({
@@ -283,7 +290,6 @@ export default {
   },
   mounted() {
     this.loadModules();
-    window.addEventListener('hashchange', this.restorePlanFromUrl);
   },
 };
 </script>
