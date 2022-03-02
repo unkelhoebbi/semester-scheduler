@@ -1,15 +1,15 @@
 <template>
-
-<div class="columns is-flex is-flex-direction-column has-text-centered">
-  <div class="semester-header">
-  <h2 class="subtitle pl-3 mb-2">Semester {{ number }}</h2>
-    <button class="delete-button delete is-medium" v-on:click="removeSemester()">
-   </button>
-  </div>
   <!-- eslint-disable-next-line vue/no-mutating-props -->
   <draggable v-model="modules"
              group="semester"
-             item-key="id">
+             item-key="id"
+             class="columns is-flex is-flex-direction-column has-text-centered">
+    <template #header>
+      <div class="semester-header">
+        <h2 class="subtitle pl-3 mb-2">Semester {{ number }}</h2>
+        <button class="delete-button delete is-medium" @click="removeSemester()"></button>
+      </div>
+    </template>
     <template #item="{element}">
       <Module
         @on-delete="$emit('on-module-deleted', $event)"
@@ -23,27 +23,26 @@
           +
         </button>
       </div>
+      <div class="column" v-bind:class="{'is-hidden': !isAddingNewModule}">
+        <label for="additionalModule">Select additional module</label>
+        <input
+          id="additionalModule"
+          ref="addModuleInput"
+          type="text"
+          list="allModules"
+          @change="addModule($event.target.value)">
+        <datalist id="allModules">
+          <option v-for="selectableModule in allModules"
+                  :key="selectableModule.name" v-bind:value="selectableModule.name">
+            {{selectableModule.name}}
+          </option>
+        </datalist>
+      </div>
+      <div class="column">
+        <p>Total ECTS: {{ getTotalEcts }}</p>
+      </div>
     </template>
   </draggable>
-  <div class="column" v-bind:class="{'is-hidden': !isAddingNewModule}">
-    <label for="additionalModule">Select additional module</label>
-    <input
-      id="additionalModule"
-      ref="addModuleInput"
-      type="text"
-      list="allModules"
-      @change="addModule($event.target.value)">
-    <datalist id="allModules">
-      <option v-for="selectableModule in allModules"
-              :key="selectableModule.name" v-bind:value="selectableModule.name">
-        {{selectableModule.name}}
-      </option>
-    </datalist>
-  </div>
-  <div class="column">
-    <p>Total ECTS: {{ getTotalEcts }}</p>
-  </div>
-</div>
 </template>
 
 <script>
