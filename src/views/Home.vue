@@ -26,6 +26,7 @@
       <Semester
         @on-module-deleted="(moduleId) => onModuleDeleted(semester.number, moduleId)"
         @on-add-module="addModule"
+        @on-remove-semester="removeSemester"
         :number="semester.number"
         v-model:modules="semester.modules"
         :all-modules="modules"
