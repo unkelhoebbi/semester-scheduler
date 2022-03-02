@@ -1,9 +1,11 @@
 <template>
-  <button class="delete-button is-pulled-right" v-on:click="removeSemester()">
-  <i class="remove-module fab fa fa-times"></i>
-</button>
-<div class="columns is-flex is-flex-direction-column has-text-centered pt-3">
-  <h2 class="subtitle">Semester {{ number }}</h2>
+
+<div class="columns is-flex is-flex-direction-column has-text-centered">
+  <div class="semester-header">
+  <h2 class="subtitle pl-3 mb-2">Semester {{ number }}</h2>
+    <button class="delete-button delete is-medium" v-on:click="removeSemester()">
+   </button>
+  </div>
   <Container
     @drop="onDrop"
     @should-accept-drop="() => true"
@@ -18,7 +20,9 @@
     </Module>
   </Container>
   <div class="column" v-bind:class="{'is-hidden': isAddingNewModule}">
-    <button class="p-2 button-add" v-on:click="isAddingNewModule=true">Add</button>
+    <button class="button is-dark button-add is-fullwidth" v-on:click="isAddingNewModule=true">
+      +
+    </button>
   </div>
   <div class="column" v-bind:class="{'is-hidden': !isAddingNewModule}">
     <label for="additionalModule">Select additional module</label>
@@ -118,22 +122,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-button {
-  background: #d63031;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  cursor:pointer;
-}
-.button-add {
-  background-color: black;
-}
-.semester .delete-button {
-  visibility: hidden;
-}
-.semester:hover .delete-button {
-  visibility: visible;
-}
-</style>
