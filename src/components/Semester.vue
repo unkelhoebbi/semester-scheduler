@@ -6,24 +6,25 @@
     <button class="delete-button delete is-medium" v-on:click="removeSemester()">
    </button>
   </div>
-  <Container
-    @drop="onDrop"
-    @should-accept-drop="() => true"
-    group-name="semester"
-    :get-child-payload="getChildPayload">
-    <Module
-      v-for="module in modules"
-      @on-delete="$emit('on-module-deleted', $event)"
-      :key="module"
-      :module="module"
-      :semesterNumber="number">
-    </Module>
-  </Container>
-  <div class="column" v-bind:class="{'is-hidden': isAddingNewModule}">
-    <button class="button is-dark button-add is-fullwidth" v-on:click="isAddingNewModule=true">
-      +
-    </button>
-  </div>
+  <!-- eslint-disable-next-line vue/no-mutating-props -->
+  <draggable v-model="modules"
+             group="semester"
+             item-key="id">
+    <template #item="{element}">
+      <Module
+        @on-delete="$emit('on-module-deleted', $event)"
+        :module="element"
+        :semesterNumber="number">
+      </Module>
+    </template>
+    <template #footer>
+      <div class="column" v-bind:class="{'is-hidden': isAddingNewModule}">
+        <button class="button is-dark button-add is-fullwidth" @click="isAddingNewModule=true">
+          +
+        </button>
+      </div>
+    </template>
+  </draggable>
   <div class="column" v-bind:class="{'is-hidden': !isAddingNewModule}">
     <label for="additionalModule">Select additional module</label>
     <input
@@ -46,7 +47,7 @@
 </template>
 
 <script>
-import { Container } from 'vue-dndrop';
+import draggable from 'vuedraggable';
 import Module from './Module.vue';
 
 export default {
@@ -65,7 +66,7 @@ export default {
   },
   components: {
     Module,
-    Container,
+    draggable,
   },
   computed: {
     getTotalEcts() {
