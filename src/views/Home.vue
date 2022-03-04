@@ -129,7 +129,7 @@ export default {
   watch: {
     $route: {
       handler() {
-        this.restorePlanFromUrl();
+        this.semesters = this.getPlanDataFromUrl();
       },
     },
   },
@@ -180,27 +180,33 @@ export default {
       const response = await fetch(`${BASE_URL}${ROUTE_FOCUSES}`);
       return response.ok ? response.json() : [];
     },
-    restorePlanFromUrl() {
+    getPlanDataFromUrl() {
       const path = window.location.hash;
-      if (path.startsWith('#/plan/')) {
-        this.semesters = path
-          .slice(7)
-          .split('-')
-          .map((semester, index) => ({
+      const planIndicator = '#/plan/';
+      const moduleSeparator = '_';
+      const semesterSeparator = '-';
+      function isNullOrWhitespace(input) {
+        return !input || !input.trim();
+      }
+      if (path.startsWith(planIndicator)) {
+        return path
+          .slice(planIndicator.length)
+          .split(semesterSeparator)
+          .map((semesterPart, index) => ({
             number: index + 1,
-            modules: semester
-              .split('_')
+            modules: semesterPart
+              .split(moduleSeparator)
+              .filter((id) => !(isNullOrWhitespace(id)))
               .map((moduleId) => {
                 const newModule = this.modules.find((module) => module.id === moduleId);
-
                 // eslint-disable-next-line no-console
                 if (newModule == null) console.warn(`Module with id: ${moduleId} could not be restored`);
-
                 return newModule;
               })
               .filter((module) => module),
           }));
       }
+      return [];
     },
     updateUrlFragment() {
       const encodedPlan = this.semesters
@@ -279,7 +285,7 @@ export default {
   },
   async mounted() {
     this.modules = await this.getModules();
-    this.restorePlanFromUrl();
+    this.semesters = this.getPlanDataFromUrl();
     this.categories = await this.getCategories();
     this.focuses = await this.getFocuses();
   },
