@@ -20,7 +20,7 @@
       </Module>
     </template>
     <template #footer>
-      <div class="column" v-bind:class="{'is-hidden': isAddingNewModule}">
+      <div class="column semester-footer" v-bind:class="{'is-hidden': isAddingNewModule}">
         <button class="button is-dark button-add is-fullwidth" @click="isAddingNewModule=true">
           +
         </button>
@@ -40,7 +40,7 @@
           </option>
         </datalist>
       </div>
-      <div class="column">
+      <div class="column semester-footer">
         <p>Total ECTS: {{ getTotalEcts }}</p>
       </div>
     </template>
@@ -105,9 +105,6 @@ export default {
     },
     onDropEnd() {
       this.$parent.updateUrlFragment();
-    },
-    getChildPayload(index) {
-      return this.modules[index];
     },
   },
 };
