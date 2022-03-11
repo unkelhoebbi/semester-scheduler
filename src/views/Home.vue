@@ -106,7 +106,7 @@
 import Semester from '../components/Semester.vue';
 import Focus from '../components/Focus.vue';
 import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
-import { CATEGORY_COLOR_MAP } from '../helpers/color-helper';
+import { getColorForCategory } from '../helpers/color-helper';
 
 const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/2.2/data';
 const ROUTE_MODULES = '/modules.json';
@@ -138,7 +138,7 @@ export default {
       return this.categories.map((category) => ({
         earnedCredits: this.getEarnedCredits(category),
         plannedCredits: this.getPlannedCredits(category),
-        color: CATEGORY_COLOR_MAP[category.id],
+        color: getColorForCategory(category.id),
         ...category,
       }));
     },
@@ -166,7 +166,7 @@ export default {
   methods: {
     sumCredits: (previousTotal, module) => previousTotal + module.ects,
     getColorForCategory(categoryId) {
-      return CATEGORY_COLOR_MAP[categoryId];
+      return getColorForCategory(categoryId);
     },
     async getModules() {
       const response = await fetch(`${BASE_URL}${ROUTE_MODULES}`);
