@@ -7,11 +7,13 @@ const CATEGORY_COLOR_MAP = {
   SaBa: '#222f3e',
   EP: '#55efc4',
   RA: '#ff9f43',
+  Fallback: '#737373',
 };
 
-const getColorForCategory = (categoryId) => CATEGORY_COLOR_MAP[categoryId];
+// eslint-disable-next-line max-len
+const getColorForCategory = (categoryId) => CATEGORY_COLOR_MAP[categoryId] || CATEGORY_COLOR_MAP.Fallback;
 
 export {
+  // eslint-disable-next-line import/prefer-default-export
   getColorForCategory,
-  CATEGORY_COLOR_MAP,
 };
