@@ -5,6 +5,8 @@
              item-key="id"
              :animation="200"
              @end="onDropEnd"
+             :delayOnTouchOnly="true"
+             :delay="500"
              class="columns is-flex is-flex-direction-column has-text-centered">
     <template #header>
       <div class="semester-header">
