@@ -14,8 +14,8 @@
     </div>
     <div class="navbar-menu" v-bind:class="{'is-active': isBurgerActive}">
       <div class="navbar-start">
-        <div class="navbar-item has-dropdown is-hoverable">
-          <template v-for="category in categories" v-bind:key="category.title">
+        <template v-for="category in categories" v-bind:key="category.title">
+          <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link" v-text="category.title" />
             <div class="navbar-dropdown">
               <a class="navbar-item"
@@ -25,8 +25,8 @@
                  v-text="plan.title"
                  @click="onBurgerClick" />
             </div>
-          </template>
-        </div>
+          </div>
+        </template>
       </div>
     </div>
   </nav>
