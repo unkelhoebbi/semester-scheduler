@@ -87,6 +87,10 @@ export default {
     isAddingNewModule(newValue) {
       if (newValue === false) {
         this.$refs.addModuleInput.value = null;
+      } else {
+        this.$nextTick(() => {
+          this.$refs.addModuleInput.focus();
+        });
       }
     },
   },
