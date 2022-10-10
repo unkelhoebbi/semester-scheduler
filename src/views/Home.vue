@@ -20,7 +20,21 @@
       <div class="column is-narrow">
       <Transition>
         <div v-if="errorMsg" class="notification is-danger">
-          <span>{{ errorMsg }}</span>
+          <span>- {{ errorMsg }}</span>
+        </div>
+      </Transition>
+    </div>
+    <div class="column is-narrow">
+      <Transition>
+        <div v-if="unknownModules?.length" class="notification is-danger">
+          Following modules could not be restored:
+          <ul>
+            <li v-for="unknown in unknownModules" :key="unknown.moduleId">
+              {{ unknown.moduleId }}
+            </li>
+          </ul>
+          <button class="button" v-on:click="removeUnknownModulesFromUrl">
+            Remove all from URL</button>
         </div>
       </Transition>
     </div>
@@ -124,6 +138,7 @@ export default {
       lastSemesterNumber: 0,
       errorMsg: null,
       errorTimer: null,
+      unknownModules: [],
     };
   },
   watch: {
@@ -199,8 +214,9 @@ export default {
               .filter((id) => !(isNullOrWhitespace(id)))
               .map((moduleId) => {
                 const newModule = this.modules.find((module) => module.id === moduleId);
-                // eslint-disable-next-line no-console
-                if (newModule == null) console.warn(`Module with id: ${moduleId} could not be restored`);
+                if (newModule == null) {
+                  this.showUnknownModulesError(index + 1, moduleId);
+                }
                 return newModule;
               })
               .filter((module) => module),
@@ -257,6 +273,7 @@ export default {
     removeModule(semesterNumber, moduleId) {
       this.semesters[semesterNumber - 1].modules = this.semesters[semesterNumber - 1].modules
         .filter((module) => module.id !== moduleId);
+      this.unknownModules = this.unknownModules.filter((f) => f.moduleId !== moduleId);
 
       this.updateUrlFragment();
     },
@@ -268,6 +285,7 @@ export default {
     },
     removeSemester(semesterNumber) {
       this.semesters = this.semesters.filter((semester) => semester.number !== semesterNumber);
+      this.unknownModules = this.unknownModules.filter((f) => f.semesterNumber !== semesterNumber);
       this.updateUrlFragment();
     },
     showErrorMsg(text) {
@@ -278,6 +296,14 @@ export default {
       this.errorTimer = setTimeout(() => {
         this.errorMsg = null;
       }, 3000);
+    },
+    showUnknownModulesError(semesterNumber, moduleId) {
+      if (this.unknownModules.find((f) => f.moduleId === moduleId)) return;
+      this.unknownModules.push({ semesterNumber, moduleId });
+    },
+    removeUnknownModulesFromUrl() {
+      this.unknownModules = [];
+      this.updateUrlFragment();
     },
     onModuleDeleted(semesterNumber, moduleId) {
       this.removeModule(semesterNumber, moduleId);
