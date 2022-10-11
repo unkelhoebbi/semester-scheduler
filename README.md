@@ -1,3 +1,8 @@
+# ⚠️ This repository has been archived
+# ⚠️ Future development will now happen [here](https://github.com/lost-university/web)
+
+---
+
 # semester-scheduler
 This project is a tool to plan your semesters at OST Rapperswil. The params in the URL will be updated automatically so you can save your data by copying the current URL.
 
