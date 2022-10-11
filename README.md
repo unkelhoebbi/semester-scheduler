@@ -4,7 +4,7 @@ This project is a tool to plan your semesters at OST Rapperswil. The params in t
 See [Example](https://lost.university/#/plan/An1I_DMI_OOP1_AutPy_Dbs1_Bsys1-An2I_AutoSpr_Bsys2_OOP2_ExEv-WE1_AlgDat_AIFo_DigCod_CN1-ParProg_SecSoW_AIAp_DatEng_CySec_FP-CoBau_MsTe_CPl_SEP1_RheKI_EnglScience-CPlA_DSy_SEP2_SEProj_KatGWR_PhAI-PF_AppArch_SAI21_PmQm_KommIng2-CldSol_BAI14_WI2)
 
 ## Contributing
-Check the [kanban board](https://github.com/unkelhoebbi/semester-scheduler/projects/1) to see what you can work on.
+Check the [open issues](https://github.com/lost-university/web/issues) to see what you can work on.
 
 ## Project setup
 ```
