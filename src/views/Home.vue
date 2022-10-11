@@ -122,7 +122,7 @@ import Focus from '../components/Focus.vue';
 import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
 import { getColorForCategory } from '../helpers/color-helper';
 
-const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/2.4/data';
+const BASE_URL = 'https://raw.githubusercontent.com/jeremystucki/ost-planer/2.5/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
 const ROUTE_FOCUSES = '/focuses.json';
