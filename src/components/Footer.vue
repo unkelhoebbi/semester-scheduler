@@ -4,7 +4,7 @@
       <div class="columns">
         <div class="column is-11">
           <p>
-            © 2022 Jeremy Stucki, Gregor Stuber, Joshua Hürzeler, Mathias Fischler, Luzia Kündig
+            © 2022 Jeremy Stucki, Gregor Stuber, Joshua Hürzeler, Mathias Fischler, Luzia Kündig, Stefanie Jäger
           </p>
         </div>
         <div class="column is-1 ml-auto">
