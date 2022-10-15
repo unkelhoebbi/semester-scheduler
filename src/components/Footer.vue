@@ -8,7 +8,7 @@
           </p>
         </div>
         <div class="column is-1 ml-auto">
-          <a class="mr-4 is-inline-block" href="https://github.com/unkelhoebbi/semester-scheduler">
+          <a class="mr-4 is-inline-block" href="https://github.com/lost-university">
             <i class="fab fa-github fa-2x social"></i>
           </a>
         </div>
