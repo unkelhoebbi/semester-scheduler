@@ -222,6 +222,12 @@ export default {
               .filter((module) => module),
           }));
       }
+
+      const cachedPlan = localStorage.getItem('plan');
+      if (cachedPlan != null) {
+        window.location.hash = cachedPlan;
+      }
+
       return [];
     },
     updateUrlFragment() {
@@ -230,6 +236,10 @@ export default {
         .join('-');
 
       window.location.hash = `plan/${encodedPlan}`;
+
+      if (encodedPlan !== []) {
+        localStorage.setItem('plan', window.location.hash);
+      }
     },
     getPlannedSemesterForModule(moduleName) {
       return this.semesters.find(
