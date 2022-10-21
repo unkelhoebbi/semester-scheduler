@@ -4,7 +4,13 @@
       <div class="columns">
         <div class="column is-11">
           <p>
-            © 2022 Jeremy Stucki, Gregor Stuber, Joshua Hürzeler, Mathias Fischler, Luzia Kündig, Stefanie Jäger
+            © 2022
+            <a class="contributor-link" href="https://github.com/jeremystucki" target="_blank">Jeremy Stucki</a>,
+            <a class="contributor-link" href="https://github.com/unkelhoebbi" target="_blank">Gregor Stuber</a>,
+            <a class="contributor-link" href="https://github.com/joshuabeny1999" target="_blank">Joshua Hürzeler</a>,
+            <a class="contributor-link" href="https://github.com/Mafii" target="_blank">Mathias Fischler</a>,
+            <a class="contributor-link" href="https://github.com/lzkndg" target="_blank">Luzia Kündig</a>,
+            <a class="contributor-link" href="https://github.com/StefanieJaeger" target="_blank">Stefanie Jäger</a>
           </p>
         </div>
         <div class="column is-1 ml-auto">
