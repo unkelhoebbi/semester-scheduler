@@ -21,13 +21,13 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
     "@vue/cli-plugin-babel": "~5.0.8",
     "@vue/cli-plugin-eslint": "~5.0.8",
     "@vue/cli-plugin-router": "~5.0.8",
     "@vue/cli-service": "~5.0.8",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-airbnb": "^7.0.0",
-    "babel-eslint": "^10.1.0",
     "eslint": "^8.30.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-vue": "^9.8.0",
@@ -43,7 +43,7 @@
       "@vue/airbnb"
     ],
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@babel/eslint-parser"
     },
     "rules": {}
   },
