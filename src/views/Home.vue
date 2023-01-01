@@ -122,7 +122,7 @@
 import Semester from '../components/Semester.vue';
 import Focus from '../components/Focus.vue';
 import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
-import { getColorForCategory } from '../helpers/color-helper';
+import { getColorForCategoryId } from '../helpers/color-helper';
 
 const BASE_URL = 'https://raw.githubusercontent.com/lost-university/data/b177b69a38c4d87fce943b0cfad19580e75e4fdb/data';
 const ROUTE_MODULES = '/modules.json';
@@ -156,7 +156,7 @@ export default {
       return this.categories.map((category) => ({
         earnedCredits: this.getEarnedCredits(category),
         plannedCredits: this.getPlannedCredits(category),
-        color: getColorForCategory(category.id),
+        color: getColorForCategoryId(category.id),
         ...category,
       }));
     },
@@ -182,8 +182,8 @@ export default {
   components: { Semester, Focus, BeautifulProgressIndicator },
   methods: {
     sumCredits: (previousTotal, module) => previousTotal + module.ects,
-    getColorForCategory(categoryId) {
-      return getColorForCategory(categoryId);
+    getColorForCategoryId(categoryId) {
+      return getColorForCategoryId(categoryId);
     },
     async getModules() {
       const response = await fetch(`${BASE_URL}${ROUTE_MODULES}`);

@@ -2,7 +2,7 @@
   <div
     class="column module mt-1"
     :key="module.name"
-    :style="{ 'background-color': this.getColorForCategory(module.categories[0].id) }">
+    :style="{ 'background-color': this.getCategoryColorForModule(module) }">
     <button type="button" class="delete-button delete is-pulled-right" @click="$emit('on-delete', module.id)" />
     <h3 class="has-text-weight-bold">{{module.name}}</h3>
     <p>{{module.ects}} ECTS</p>
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { getColorForCategory } from '../helpers/color-helper';
+import { getCategoryColorForModule } from '../helpers/color-helper';
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
@@ -27,7 +27,7 @@ export default {
     },
   },
   methods: {
-    getColorForCategory,
+    getCategoryColorForModule,
   },
 };
 </script>
