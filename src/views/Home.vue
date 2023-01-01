@@ -252,14 +252,14 @@ export default {
       return this.semesters
         .filter((semester) => semester.number <= this.lastSemesterNumber)
         .flatMap((semester) => semester.modules)
-        .filter((module) => category?.modules?.some((m) => m.id === module.id))
+        .filter((module) => !category || category.modules.some((m) => m.id === module.id))
         .reduce(this.sumCredits, 0);
     },
     getPlannedCredits(category = undefined) {
       return this.semesters
         .filter((semester) => semester.number > this.lastSemesterNumber)
         .flatMap((semester) => semester.modules)
-        .filter((module) => category?.modules?.some((m) => m.id === module.id))
+        .filter((module) => !category || category.modules.some((m) => m.id === module.id))
         .reduce(this.sumCredits, 0);
     },
     addModule(moduleName, semesterNumber) {
