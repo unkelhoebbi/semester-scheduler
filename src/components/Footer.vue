@@ -4,7 +4,7 @@
       <div class="columns">
         <div class="column is-11">
           <p>
-            © 2022
+            © 2023
             <a class="contributor-link" href="https://github.com/jeremystucki" target="_blank">Jeremy Stucki</a>,
             <a class="contributor-link" href="https://github.com/unkelhoebbi" target="_blank">Gregor Stuber</a>,
             <a class="contributor-link" href="https://github.com/joshuabeny1999" target="_blank">Joshua Hürzeler</a>,
