@@ -215,9 +215,18 @@ export default {
               .split(moduleSeparator)
               .filter((id) => !(isNullOrWhitespace(id)))
               .map((moduleId) => {
-                const newModule = this.modules.find((module) => module.id === moduleId);
+                // todo: use map to migrate FunProg to FP and BAI14 and BAI21.
+                // Add comment, that we can remove in 6 months or so
+                // some URLs might still contain the old moduleIds.
+                // This ensures backwards compatability.
+                // Removing it after about 6 months should be fine (so July 23)
+                // todo: should we replace it in URL as well?
+                const oldModuleIdsMap = { FunProg: 'FP', BAI14: 'BAI21' };
+                // todo: change name of moduleId
+                const goodModuleId = oldModuleIdsMap[moduleId] || moduleId;
+                const newModule = this.modules.find((module) => module.id === goodModuleId);
                 if (newModule == null) {
-                  this.showUnknownModulesError(index + 1, moduleId);
+                  this.showUnknownModulesError(index + 1, goodModuleId);
                 }
                 return newModule;
               })

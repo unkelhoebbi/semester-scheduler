@@ -28,3 +28,9 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+## Stefi
+
+- [ ] Migrieren BAI14, FunProg
+- [x] Total
