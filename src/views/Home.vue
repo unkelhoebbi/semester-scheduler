@@ -206,7 +206,8 @@ export default {
         return !input || !input.trim();
       }
       if (path.startsWith(planIndicator)) {
-        return path
+        let pathContainedOldModules = false;
+        const planData = path
           .slice(planIndicator.length)
           .split(semesterSeparator)
           .map((semesterPart, index) => ({
@@ -215,23 +216,27 @@ export default {
               .split(moduleSeparator)
               .filter((id) => !(isNullOrWhitespace(id)))
               .map((moduleId) => {
-                // todo: use map to migrate FunProg to FP and BAI14 and BAI21.
-                // Add comment, that we can remove in 6 months or so
-                // some URLs might still contain the old moduleIds.
                 // This ensures backwards compatability.
-                // Removing it after about 6 months should be fine (so July 23)
-                // todo: should we replace it in URL as well?
+                // Removing it after about 6 months should be fine (so around August 2023)
                 const oldModuleIdsMap = { FunProg: 'FP', BAI14: 'BAI21' };
-                // todo: change name of moduleId
                 const goodModuleId = oldModuleIdsMap[moduleId] || moduleId;
+                if (oldModuleIdsMap[moduleId]) {
+                  pathContainedOldModules = true;
+                }
                 const newModule = this.modules.find((module) => module.id === goodModuleId);
-                if (newModule == null) {
+                if (newModule === null) {
                   this.showUnknownModulesError(index + 1, goodModuleId);
                 }
                 return newModule;
               })
               .filter((module) => module),
           }));
+
+        if (pathContainedOldModules) {
+          this.updateUrlFragment();
+        }
+
+        return planData;
       }
 
       const cachedPlan = localStorage.getItem('plan');
