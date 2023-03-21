@@ -113,7 +113,7 @@
       </article>
     </div>
     <div class="column">
-      <img src="../assets/this_is_fine.jpg" alt="">
+      <img src="../assets/this_is_fine.jpg" alt="A cartoon dog sitting in a burning livingroom, with a cup of coffee, stating: 'This is fine.'.">
     </div>
   </div>
 </template>
