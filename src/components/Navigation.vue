@@ -17,9 +17,7 @@
         <span aria-hidden="true" />
         <span aria-hidden="true" />
         <span aria-hidden="true" />
-      </a
-
-      >
+      </a>
     </div>
     <div class="navbar-menu" v-bind:class="{ 'is-active': isBurgerActive }">
       <div class="navbar-start">
