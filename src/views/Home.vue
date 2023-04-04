@@ -198,15 +198,26 @@ export default {
       return response.ok ? response.json() : [];
     },
     getPlanDataFromUrl() {
-      const path = window.location.hash;
+      let path = window.location.hash;
       const planIndicator = '#/plan/';
       const moduleSeparator = '_';
       const semesterSeparator = '-';
       function isNullOrWhitespace(input) {
         return !input || !input.trim();
       }
+      if (!path.startsWith(planIndicator)) {
+        const cachedPlan = localStorage.getItem('plan');
+        if (cachedPlan) {
+          window.location.hash = cachedPlan;
+          path = cachedPlan;
+        }
+      }
+
       if (path.startsWith(planIndicator)) {
-        let pathContainedOldModules = false;
+        // This ensures backwards compatability.
+        // Removing it after about 6 months should be fine (so around August 2023)
+        path = path.replace('FunProg', 'FP').replace('BAI14', 'BAI21');
+
         const planData = path
           .slice(planIndicator.length)
           .split(semesterSeparator)
@@ -216,32 +227,18 @@ export default {
               .split(moduleSeparator)
               .filter((id) => !(isNullOrWhitespace(id)))
               .map((moduleId) => {
-                // This ensures backwards compatability.
-                // Removing it after about 6 months should be fine (so around August 2023)
-                const oldModuleIdsMap = { FunProg: 'FP', BAI14: 'BAI21' };
-                const goodModuleId = oldModuleIdsMap[moduleId] || moduleId;
-                if (oldModuleIdsMap[moduleId]) {
-                  pathContainedOldModules = true;
-                }
-                const newModule = this.modules.find((module) => module.id === goodModuleId);
+                const newModule = this.modules.find((module) => module.id === moduleId);
                 if (newModule === null) {
-                  this.showUnknownModulesError(index + 1, goodModuleId);
+                  this.showUnknownModulesError(index + 1, moduleId);
                 }
                 return newModule;
               })
               .filter((module) => module),
           }));
 
-        if (pathContainedOldModules) {
-          this.updateUrlFragment();
-        }
+        this.savePathInLocalStorage(path);
 
         return planData;
-      }
-
-      const cachedPlan = localStorage.getItem('plan');
-      if (cachedPlan != null) {
-        window.location.hash = cachedPlan;
       }
 
       return [];
@@ -253,9 +250,12 @@ export default {
 
       window.location.hash = `plan/${encodedPlan}`;
 
-      if (encodedPlan !== []) {
-        localStorage.setItem('plan', window.location.hash);
+      if (encodedPlan) {
+        this.savePathInLocalStorage(window.location.hash);
       }
+    },
+    savePathInLocalStorage(path) {
+      localStorage.setItem('plan', path);
     },
     getPlannedSemesterForModule(moduleName) {
       return this.semesters.find(
