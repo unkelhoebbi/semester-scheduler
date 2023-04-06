@@ -124,7 +124,7 @@ import Focus from '../components/Focus.vue';
 import BeautifulProgressIndicator from '../components/BeautifulProgressIndicator.vue';
 import { getColorForCategoryId } from '../helpers/color-helper';
 
-const BASE_URL = 'https://raw.githubusercontent.com/lost-university/data/3.0/data';
+const BASE_URL = 'https://raw.githubusercontent.com/lost-university/data/b177b69a38c4d87fce943b0cfad19580e75e4fdb/data';
 const ROUTE_MODULES = '/modules.json';
 const ROUTE_CATEGORIES = '/categories.json';
 const ROUTE_FOCUSES = '/focuses.json';
