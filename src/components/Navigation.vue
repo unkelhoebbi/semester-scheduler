@@ -5,21 +5,19 @@
         <img src="../assets/logo.png" class="logo-nav" alt="Logo">
       </router-link>
       <a
-        tabindex="0"
-        @click="onBurgerClick"
+        v-on:click="onBurgerClick"
         @keydown="onBurgerClick"
         v-bind:class="{ 'is-active': isBurgerActive }"
         role="button"
         class="navbar-burger"
         aria-label="menu"
         aria-expanded="false"
-        data-target="navbarBasicExample">
+        data-target="navbarBasicExample"
+        href="#">
         <span aria-hidden="true" />
         <span aria-hidden="true" />
         <span aria-hidden="true" />
-      </a
-
-      >
+      </a>
     </div>
     <div class="navbar-menu" v-bind:class="{ 'is-active': isBurgerActive }">
       <div class="navbar-start">
